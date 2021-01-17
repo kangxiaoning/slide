@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>Iterator in Python and Rust</title>
+<meta name="author" content="kangxiaoning"/>
+<style type="text/css">
+.underline { text-decoration: underline; }
+</style>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@3.8.0/css/reveal.css"/>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@3.8.0/css/theme/white.css" id="theme"/>
+
+<!-- If the query includes 'print-pdf', include the PDF print sheet -->
+<script>
+    if( window.location.search.match( /print-pdf/gi ) ) {
+        var link = document.createElement( 'link' );
+        link.rel = 'stylesheet';
+        link.type = 'text/css';
+        link.href = 'https://cdn.jsdelivr.net/npm/reveal.js@3.8.0/css/print/pdf.css';
+        document.getElementsByTagName( 'head' )[0].appendChild( link );
+    }
+</script>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+<section id="sec-title-slide">
+<h1 class="title">Iterator in Python and Rust</h1><h2 class="author">kangxiaoning</h2><p class="date">Created: 2021-01-17 Sun 21:59</p>
+</section>
+
+
+<section>
+<section id="slide-orga048f6b">
+<h2 id="orga048f6b">Objectives</h2>
+<ul>
+<li>Understand iterator and iterable</li>
+<li>Implement iterator in python and rust</li>
+
+</ul>
+
+</section>
+</section>
+<section>
+<section id="slide-orge787228">
+<h2 id="orge787228">Agenda</h2>
+<ul>
+<li>Questions</li>
+<li>What</li>
+<li>How</li>
+<li>Desugar for loop</li>
+<li>Why</li>
+
+</ul>
+
+</section>
+</section>
+<section>
+<section id="slide-org46e2f5a">
+<h2 id="org46e2f5a">Questions</h2>
+<ul>
+<li>What is iterator?</li>
+<li>What is iterable?</li>
+<li>What is the difference between iterator and iterable?</li>
+
+</ul>
+
+</section>
+</section>
+<section>
+<section id="slide-orgd5af777">
+<h2 id="orgd5af777">What</h2>
+<ul>
+<li>In computer programming, an iterator is an object that enables a programmer to traverse a container, particularly lists.</li>
+
+</ul>
+</section>
+<section id="slide-org89f7f71">
+<h3 id="org89f7f71">Python</h3>
+<ul>
+<li>An iterable object is an object that implements _<sub>iter</sub>__, which is expected to return an iterator object.</li>
+<li>An iterator is an object that implements next, which is expected to return the next element of the iterable object that returned it,
+and raise a StopIteration exception when no more elements are available.</li>
+
+</ul>
+</section>
+<section id="slide-org720839f">
+<h3 id="org720839f">Rust</h3>
+<ul>
+<li>An iterable</li>
+
+</ul>
+<div class="org-src-container">
+
+<pre class="src src-rust"><span style="color: #F92672;">pub</span> <span style="color: #F92672;">trait</span> <span style="color: #66D9EF;">IntoIterator</span> 
+<span style="color: #F92672;">where</span>
+&#160;&#160;&#160;&#160;<span style="color: #AE81FF;">&lt;</span><span style="color: #66D9EF;">Self</span>::<span style="color: #66D9EF;">IntoIter</span> <span style="color: #F92672;">as</span> <span style="color: #66D9EF;">Iterator</span><span style="color: #AE81FF;">&gt;</span>::<span style="color: #66D9EF;">Item</span> == <span style="color: #66D9EF;">Self</span>::<span style="color: #66D9EF;">Item</span>,&#160;
+<span style="color: #AE81FF;">{</span>
+    <span style="color: #F92672;">type</span> <span style="color: #66D9EF;">Item</span>;
+    <span style="color: #F92672;">type</span> <span style="color: #FD971F;">IntoIter</span>: <span style="color: #66D9EF;">Iterator</span>;
+    <span style="color: #F92672;">fn</span> <span style="color: #A6E22E;">into_iter</span><span style="color: #66D9EF;">(</span><span style="color: #F92672;">self</span><span style="color: #66D9EF;">)</span> -&gt; <span style="color: #66D9EF;">Self</span>::<span style="color: #66D9EF;">IntoIter</span>;
+<span style="color: #AE81FF;">}</span>
+</pre>
+</div>
+
+<ul>
+<li>An iterator</li>
+
+</ul>
+<div class="org-src-container">
+
+<pre class="src src-rust"><span style="color: #F92672;">pub</span> <span style="color: #F92672;">trait</span> <span style="color: #66D9EF;">Iterator</span> <span style="color: #AE81FF;">{</span>
+    <span style="color: #F92672;">type</span> <span style="color: #66D9EF;">Item</span>;
+    <span style="color: #F92672;">fn</span> <span style="color: #A6E22E;">next</span><span style="color: #66D9EF;">(</span>&amp;<span style="color: #F92672;">mut</span> <span style="color: #F92672;">self</span><span style="color: #66D9EF;">)</span> -&gt; <span style="color: #66D9EF;">Option</span><span style="color: #66D9EF;">&lt;</span><span style="color: #66D9EF;">Self</span>::<span style="color: #66D9EF;">Item</span><span style="color: #66D9EF;">&gt;</span>;
+<span style="color: #AE81FF;">}</span>
+</pre>
+</div>
+
+</section>
+</section>
+<section>
+<section id="slide-orgab0f694">
+<h2 id="orgab0f694">How</h2>
+<div class="outline-text-2" id="text-orgab0f694">
+</div>
+</section>
+<section id="slide-orgb06e17f" data-background="./images/iterator.jpg" data-background-transition="slide">
+<h3 id="orgb06e17f"></h3>
+
+</section>
+<section id="slide-orgc8c2635">
+<h3 id="orgc8c2635">Python</h3>
+<div class="org-src-container">
+
+<pre class="src src-python"><span style="color: #F92672;">class</span> <span style="color: #66D9EF;">GenerateNumbers</span>:
+    <span style="color: #F92672;">def</span> <span style="color: #A6E22E;">__init__</span><span style="color: #AE81FF;">(</span><span style="color: #F92672;">self</span>, start, end<span style="color: #AE81FF;">)</span>:
+        <span style="color: #F92672;">self</span>.current = start
+        <span style="color: #F92672;">self</span>.high = end
+
+    <span style="color: #F92672;">def</span> <span style="color: #A6E22E;">__iter__</span><span style="color: #AE81FF;">(</span><span style="color: #F92672;">self</span><span style="color: #AE81FF;">)</span>:
+        <span style="color: #F92672;">return</span> <span style="color: #F92672;">self</span>
+
+    <span style="color: #F92672;">def</span> <span style="color: #A6E22E;">__next__</span><span style="color: #AE81FF;">(</span><span style="color: #F92672;">self</span><span style="color: #AE81FF;">)</span> -&gt; <span style="color: #F92672;">int</span>:
+        <span style="color: #F92672;">if</span> <span style="color: #F92672;">self</span>.current &gt; <span style="color: #F92672;">self</span>.high:
+            <span style="color: #F92672;">raise</span> <span style="color: #66D9EF;">StopIteration</span>
+        <span style="color: #F92672;">else</span>:
+            <span style="color: #F92672;">self</span>.current += <span style="color: #AE81FF;">1</span>
+            <span style="color: #F92672;">return</span> <span style="color: #F92672;">self</span>.current - <span style="color: #AE81FF;">1</span>
+
+
+</pre>
+</div>
+
+
+</section>
+<section>
+
+<div class="org-src-container">
+
+<pre class="src src-python"><span style="color: #F92672;">class</span> <span style="color: #66D9EF;">AlphaList</span>:
+    <span style="color: #F92672;">def</span> <span style="color: #A6E22E;">__init__</span><span style="color: #AE81FF;">(</span><span style="color: #F92672;">self</span>, elements: <span style="color: #F92672;">list</span><span style="color: #AE81FF;">)</span> -&gt; <span style="color: #AE81FF;">None</span>:
+        <span style="color: #F92672;">self</span>.alpha_list = elements
+
+    <span style="color: #F92672;">def</span> <span style="color: #A6E22E;">__iter__</span><span style="color: #AE81FF;">(</span><span style="color: #F92672;">self</span><span style="color: #AE81FF;">)</span>:
+        <span style="color: #F92672;">return</span> AlphaListIterator<span style="color: #AE81FF;">(</span><span style="color: #F92672;">self</span>.alpha_list<span style="color: #AE81FF;">)</span>
+
+
+<span style="color: #F92672;">class</span> <span style="color: #66D9EF;">AlphaListIterator</span>:
+    <span style="color: #F92672;">def</span> <span style="color: #A6E22E;">__init__</span><span style="color: #AE81FF;">(</span><span style="color: #F92672;">self</span>, elements: <span style="color: #F92672;">list</span><span style="color: #AE81FF;">)</span> -&gt; <span style="color: #AE81FF;">None</span>:
+        <span style="color: #F92672;">self</span>.alpha_list = elements
+        <span style="color: #F92672;">self</span>.index = <span style="color: #AE81FF;">0</span>
+
+    <span style="color: #F92672;">def</span> <span style="color: #A6E22E;">__next__</span><span style="color: #AE81FF;">(</span><span style="color: #F92672;">self</span><span style="color: #AE81FF;">)</span>:
+        <span style="color: #F92672;">try</span>:
+            <span style="color: #FD971F;">result</span> = <span style="color: #F92672;">self</span>.alpha_list<span style="color: #AE81FF;">[</span><span style="color: #F92672;">self</span>.index<span style="color: #AE81FF;">]</span>
+        <span style="color: #F92672;">except</span> <span style="color: #66D9EF;">IndexError</span>:
+            <span style="color: #F92672;">raise</span> <span style="color: #66D9EF;">StopIteration</span>
+        <span style="color: #F92672;">self</span>.index += <span style="color: #AE81FF;">1</span>
+        <span style="color: #F92672;">return</span> result
+
+    <span style="color: #F92672;">def</span> <span style="color: #A6E22E;">__iter__</span><span style="color: #AE81FF;">(</span><span style="color: #F92672;">self</span><span style="color: #AE81FF;">)</span>:
+        <span style="color: #F92672;">return</span> <span style="color: #F92672;">self</span>
+
+</pre>
+</div>
+
+</section>
+<section>
+
+<div class="org-src-container">
+
+<pre class="src src-python"><span style="color: #F92672;">if</span> <span style="color: #F92672;">__name__</span> == <span style="color: #E6DB74;">"__main__"</span>:
+    <span style="color: #FD971F;">g</span> = GenerateNumbers<span style="color: #AE81FF;">(</span><span style="color: #AE81FF;">0</span>, <span style="color: #AE81FF;">10</span><span style="color: #AE81FF;">)</span>
+    <span style="color: #F92672;">for</span> i <span style="color: #F92672;">in</span> g:
+        <span style="color: #F92672;">print</span><span style="color: #AE81FF;">(</span>i<span style="color: #AE81FF;">)</span>
+
+    <span style="color: #FD971F;">alpha_list</span> = AlphaList<span style="color: #AE81FF;">(</span><span style="color: #66D9EF;">[</span><span style="color: #AE81FF;">1</span>, <span style="color: #AE81FF;">2</span>, <span style="color: #AE81FF;">3</span><span style="color: #66D9EF;">]</span><span style="color: #AE81FF;">)</span>
+    <span style="color: #F92672;">print</span><span style="color: #AE81FF;">(</span>alpha_list<span style="color: #AE81FF;">)</span>
+    <span style="color: #F92672;">for</span> e <span style="color: #F92672;">in</span> alpha_list:
+        <span style="color: #F92672;">print</span><span style="color: #AE81FF;">(</span>e<span style="color: #AE81FF;">)</span>
+
+    <span style="color: #F92672;">for</span> e <span style="color: #F92672;">in</span> alpha_list:
+        <span style="color: #F92672;">print</span><span style="color: #AE81FF;">(</span>e<span style="color: #AE81FF;">)</span>
+
+    <span style="color: #FD971F;">it1</span> = AlphaListIterator<span style="color: #AE81FF;">(</span><span style="color: #66D9EF;">[</span><span style="color: #AE81FF;">1</span>, <span style="color: #AE81FF;">2</span>, <span style="color: #AE81FF;">3</span>, <span style="color: #AE81FF;">4</span>, <span style="color: #AE81FF;">5</span><span style="color: #66D9EF;">]</span><span style="color: #AE81FF;">)</span>
+    <span style="color: #F92672;">for</span> e <span style="color: #F92672;">in</span> it1:
+        <span style="color: #F92672;">print</span><span style="color: #AE81FF;">(</span>e<span style="color: #AE81FF;">)</span>
+
+    <span style="color: #F92672;">for</span> e <span style="color: #F92672;">in</span> it1:
+        <span style="color: #F92672;">print</span><span style="color: #AE81FF;">(</span><span style="color: #E6DB74;">"again..."</span><span style="color: #AE81FF;">)</span>
+        <span style="color: #F92672;">print</span><span style="color: #AE81FF;">(</span>e<span style="color: #AE81FF;">)</span>
+
+
+</pre>
+</div>
+
+</section>
+<section id="slide-org7237ce6">
+<h3 id="org7237ce6">Rust</h3>
+<div class="org-src-container">
+
+<pre class="src src-rust"><span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">AlphaList</span><span style="color: #AE81FF;">&lt;</span><span style="color: #66D9EF;">T</span><span style="color: #AE81FF;">&gt;</span> <span style="color: #AE81FF;">{</span>
+    <span style="color: #FD971F;">alpha_list</span>: <span style="color: #66D9EF;">Vec</span><span style="color: #66D9EF;">&lt;</span><span style="color: #66D9EF;">T</span><span style="color: #66D9EF;">&gt;</span>,
+<span style="color: #AE81FF;">}</span>
+
+<span style="color: #F92672;">impl</span><span style="color: #AE81FF;">&lt;</span><span style="color: #66D9EF;">T</span><span style="color: #AE81FF;">&gt;</span> <span style="color: #66D9EF;">AlphaList</span><span style="color: #AE81FF;">&lt;</span><span style="color: #66D9EF;">T</span><span style="color: #AE81FF;">&gt;</span> <span style="color: #AE81FF;">{</span>
+    <span style="color: #F92672;">pub</span> <span style="color: #F92672;">fn</span> <span style="color: #A6E22E;">new</span><span style="color: #66D9EF;">(</span><span style="color: #FD971F;">elements</span>: <span style="color: #66D9EF;">Vec</span><span style="color: #A6E22E;">&lt;</span><span style="color: #66D9EF;">T</span><span style="color: #A6E22E;">&gt;</span><span style="color: #66D9EF;">)</span> -&gt; <span style="color: #66D9EF;">Self</span> <span style="color: #66D9EF;">{</span>
+        <span style="color: #66D9EF;">AlphaList</span> <span style="color: #A6E22E;">{</span>
+            <span style="color: #FD971F;">alpha_list</span>: elements,
+        <span style="color: #A6E22E;">}</span>
+    <span style="color: #66D9EF;">}</span>
+<span style="color: #AE81FF;">}</span>
+
+</pre>
+</div>
+
+</section>
+<section>
+
+<div class="org-src-container">
+
+<pre class="src src-rust"><span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">AlphaListIterator</span><span style="color: #AE81FF;">&lt;</span><span style="color: #66D9EF;">T</span><span style="color: #AE81FF;">&gt;</span> <span style="color: #AE81FF;">{</span>
+    <span style="color: #FD971F;">alpha_list</span>: <span style="color: #66D9EF;">Vec</span><span style="color: #66D9EF;">&lt;</span><span style="color: #66D9EF;">T</span><span style="color: #66D9EF;">&gt;</span>,
+    <span style="color: #FD971F;">index</span>: <span style="color: #66D9EF;">usize</span>,
+<span style="color: #AE81FF;">}</span>
+
+<span style="color: #F92672;">impl</span><span style="color: #AE81FF;">&lt;</span><span style="color: #66D9EF;">T</span><span style="color: #AE81FF;">&gt;</span> <span style="color: #66D9EF;">Iterator</span> <span style="color: #F92672;">for</span> <span style="color: #66D9EF;">AlphaListIterator</span><span style="color: #AE81FF;">&lt;</span><span style="color: #66D9EF;">T</span><span style="color: #AE81FF;">&gt;</span>
+<span style="color: #F92672;">where</span>
+    <span style="color: #FD971F;">T</span>: <span style="color: #66D9EF;">Clone</span>,
+<span style="color: #AE81FF;">{</span>
+    <span style="color: #F92672;">type</span> <span style="color: #66D9EF;">Item</span> = <span style="color: #66D9EF;">T</span>;
+    <span style="color: #F92672;">fn</span> <span style="color: #A6E22E;">next</span><span style="color: #66D9EF;">(</span>&amp;<span style="color: #F92672;">mut</span> <span style="color: #F92672;">self</span><span style="color: #66D9EF;">)</span> -&gt; <span style="color: #66D9EF;">Option</span><span style="color: #66D9EF;">&lt;</span><span style="color: #66D9EF;">Self</span>::<span style="color: #66D9EF;">Item</span><span style="color: #66D9EF;">&gt;</span> <span style="color: #66D9EF;">{</span>
+        <span style="color: #F92672;">match</span> <span style="color: #F92672;">self</span>.alpha_list.get<span style="color: #A6E22E;">(</span><span style="color: #F92672;">self</span>.index<span style="color: #A6E22E;">)</span> <span style="color: #A6E22E;">{</span>
+            <span style="color: #66D9EF;">Some</span><span style="color: #E6DB74;">(</span>e<span style="color: #E6DB74;">)</span> =&gt; <span style="color: #E6DB74;">{</span>
+                <span style="color: #F92672;">self</span>.index += <span style="color: #AE81FF;">1</span>;
+                <span style="color: #F92672;">return</span> <span style="color: #66D9EF;">Some</span><span style="color: #FD971F;">(</span>e.clone<span style="color: #F92672;">()</span><span style="color: #FD971F;">)</span>;
+            <span style="color: #E6DB74;">}</span>
+            <span style="color: #66D9EF;">None</span> =&gt; <span style="color: #F92672;">return</span> <span style="color: #66D9EF;">None</span>,
+        <span style="color: #A6E22E;">}</span>
+    <span style="color: #66D9EF;">}</span>
+<span style="color: #AE81FF;">}</span>
+</pre>
+</div>
+
+</section>
+<section>
+
+<div class="org-src-container">
+
+<pre class="src src-rust"><span style="color: #F92672;">impl</span><span style="color: #AE81FF;">&lt;</span><span style="color: #66D9EF;">T</span><span style="color: #AE81FF;">&gt;</span> <span style="color: #66D9EF;">IntoIterator</span> <span style="color: #F92672;">for</span> <span style="color: #66D9EF;">AlphaList</span><span style="color: #AE81FF;">&lt;</span><span style="color: #66D9EF;">T</span><span style="color: #AE81FF;">&gt;</span>
+<span style="color: #F92672;">where</span>
+    <span style="color: #FD971F;">T</span>: <span style="color: #66D9EF;">Clone</span>,
+<span style="color: #AE81FF;">{</span>
+    <span style="color: #F92672;">type</span> <span style="color: #66D9EF;">Item</span> = <span style="color: #66D9EF;">T</span>;
+    <span style="color: #F92672;">type</span> <span style="color: #66D9EF;">IntoIter</span> = <span style="color: #66D9EF;">AlphaListIterator</span><span style="color: #66D9EF;">&lt;</span><span style="color: #66D9EF;">T</span><span style="color: #66D9EF;">&gt;</span>;
+
+    <span style="color: #F92672;">fn</span> <span style="color: #A6E22E;">into_iter</span><span style="color: #66D9EF;">(</span><span style="color: #F92672;">self</span><span style="color: #66D9EF;">)</span> -&gt; <span style="color: #66D9EF;">Self</span>::<span style="color: #66D9EF;">IntoIter</span> <span style="color: #66D9EF;">{</span>
+        <span style="color: #66D9EF;">AlphaListIterator</span> <span style="color: #A6E22E;">{</span>
+            <span style="color: #FD971F;">alpha_list</span>: <span style="color: #F92672;">self</span>.alpha_list,
+            <span style="color: #FD971F;">index</span>: <span style="color: #AE81FF;">0</span>,
+        <span style="color: #A6E22E;">}</span>
+    <span style="color: #66D9EF;">}</span>
+<span style="color: #AE81FF;">}</span>
+
+<span style="color: #F92672;">fn</span> <span style="color: #A6E22E;">main</span><span style="color: #AE81FF;">()</span> <span style="color: #AE81FF;">{</span>
+    <span style="color: #F92672;">let</span> <span style="color: #FD971F;">alpha_list</span> = <span style="color: #66D9EF;">AlphaList</span>::new<span style="color: #66D9EF;">(</span><span style="color: #F92672;">vec!</span><span style="color: #A6E22E;">[</span><span style="color: #AE81FF;">1</span>, <span style="color: #AE81FF;">2</span>, <span style="color: #AE81FF;">3</span><span style="color: #A6E22E;">]</span><span style="color: #66D9EF;">)</span>;
+    <span style="color: #F92672;">for</span> <span style="color: #FD971F;">e</span> <span style="color: #F92672;">in</span> alpha_list <span style="color: #66D9EF;">{</span>
+        <span style="color: #F92672;">println!</span><span style="color: #A6E22E;">(</span><span style="color: #E6DB74;">"</span><span style="color: #E6DB74; font-style: italic;">{}</span><span style="color: #E6DB74;">"</span>, e<span style="color: #A6E22E;">)</span>;
+    <span style="color: #66D9EF;">}</span>
+<span style="color: #AE81FF;">}</span>
+</pre>
+</div>
+
+</section>
+<section id="slide-org28970d2" data-background="./images/iterator-python.jpg" data-background-size="800px">
+<h3 id="org28970d2"></h3>
+
+</section>
+<section id="slide-orgeb4b501">
+<h3 id="orgeb4b501"></h3>
+<ul>
+<li>An iterable should never act as an iterator over itself. In other words, iterables must implement _<sub>iter</sub>__, but not _<sub>next</sub>__.</li>
+<li>On the other hand, iterators should always be iterable. An iterator’s _<sub>iter</sub>__ should just return self.</li>
+<li>to support multiple traversals of aggregate objects.</li>
+<li>only pay for what you need.</li>
+
+</ul>
+
+
+</section>
+</section>
+<section>
+<section id="slide-orgd216186">
+<h2 id="orgd216186">Desugar for loop</h2>
+<ul>
+<li>Python</li>
+
+</ul>
+<div class="org-src-container">
+
+<pre class="src src-python"><span style="color: #FD971F;">it</span> = <span style="color: #F92672;">iter</span><span style="color: #AE81FF;">(</span>sequence<span style="color: #AE81FF;">)</span>
+<span style="color: #F92672;">while</span> <span style="color: #AE81FF;">True</span>:
+    <span style="color: #F92672;">try</span>:
+        <span style="color: #FD971F;">value</span> = <span style="color: #F92672;">next</span><span style="color: #AE81FF;">(</span>it<span style="color: #AE81FF;">)</span>
+<span style="color: #F92672;">except</span> <span style="color: #66D9EF;">StopIteration</span>:
+        <span style="color: #F92672;">break</span>
+    <span style="color: #F92672;">print</span><span style="color: #AE81FF;">(</span>value<span style="color: #AE81FF;">)</span>
+</pre>
+</div>
+
+<ul>
+<li>Rust</li>
+
+</ul>
+<div class="org-src-container">
+
+<pre class="src src-rust"><span style="color: #F92672;">let</span> <span style="color: #F92672;">mut</span> <span style="color: #FD971F;">iter</span> = <span style="color: #66D9EF;">IntoIterator</span>::into_iter<span style="color: #AE81FF;">(</span>v<span style="color: #AE81FF;">)</span>;
+<span style="color: #F92672;">loop</span> <span style="color: #AE81FF;">{</span>
+    <span style="color: #F92672;">match</span> iter.next<span style="color: #66D9EF;">()</span> <span style="color: #66D9EF;">{</span>
+        <span style="color: #66D9EF;">Some</span><span style="color: #A6E22E;">(</span>x<span style="color: #A6E22E;">)</span> =&gt; <span style="color: #A6E22E;">{</span> statement <span style="color: #A6E22E;">}</span>,
+        <span style="color: #66D9EF;">None</span> =&gt; <span style="color: #F92672;">break</span>,
+    <span style="color: #66D9EF;">}</span>
+<span style="color: #AE81FF;">}</span>
+</pre>
+</div>
+
+</section>
+</section>
+<section>
+<section id="slide-org1200bd6">
+<h2 id="org1200bd6">Why</h2>
+<ul>
+<li>In procedural languages it is common to use the subscript operator and a loop counter to loop through all the elements in a sequence such as an array.
+Although indexing may also be used with some object-oriented containers, the use of iterators may have some advantages:</li>
+<li>Counting loops are not suitable to all data structures, in particular to data structures with no or slow random access, like lists or trees.</li>
+
+</ul>
+
+</section>
+<section>
+
+<ul>
+<li>Iterators can provide a consistent way to iterate on data structures of all kinds, and therefore make the code more readable, reusable, and less sensitive
+to a change in the data structure.</li>
+<li>An iterator can enforce additional restrictions on access, such as ensuring that elements cannot be skipped or that a previously visited element cannot be accessed a second time.</li>
+
+</ul>
+
+</section>
+<section>
+
+<ul>
+<li>An iterator may allow the container object to be modified without invalidating the iterator. For instance,
+once an iterator has advanced beyond the first element it may be possible to insert additional elements into the beginning of the container with predictable results.
+With indexing this is problematic since the index numbers must change.</li>
+<li>When scanning datasets that don’t fit in memory, we need a way to fetch the items lazily, that is, one at a time and on demand.</li>
+
+</ul>
+
+</section>
+</section>
+<section>
+<section id="slide-org31ca9a6">
+<h2 id="org31ca9a6">Q&amp;A</h2>
+</section>
+</section>
+</div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@3.8.0/lib/js/head.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@3.8.0/js/reveal.js"></script>
+<script>
+// Full list of configuration options available here:
+// https://github.com/hakimel/reveal.js#configuration
+Reveal.initialize({
+
+controls: true,
+progress: true,
+history: false,
+center: true,
+slideNumber: 'c/t',
+rollingLinks: false,
+keyboard: true,
+mouseWheel: false,
+fragmentInURL: false,
+hashOneBasedIndex: false,
+pdfSeparateFragments: true,
+
+overview: true,
+
+theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+transition: Reveal.getQueryHash().transition || 'convex', // see README of reveal.js for options
+transitionSpeed: 'default',
+
+// Optional libraries used to extend reveal.js
+dependencies: [
+ { src: 'https://cdn.jsdelivr.net/npm/reveal.js@3.8.0/plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+ { src: 'https://cdn.jsdelivr.net/npm/reveal.js@3.8.0/plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+ { src: 'https://cdn.jsdelivr.net/npm/reveal.js@3.8.0/plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } },
+ { src: 'https://cdn.jsdelivr.net/npm/reveal.js@3.8.0/plugin/search/search.js', async: true, condition: function() { return !!document.body.classList; } },
+ { src: 'https://cdn.jsdelivr.net/npm/reveal.js@3.8.0/plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } }]
+
+});
+</script>
+</body>
+</html>

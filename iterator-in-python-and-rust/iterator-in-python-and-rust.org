@@ -1,0 +1,257 @@
+#+Title: Iterator in Python and Rust
+#+Author: kangxiaoning
+#+REVEAL_ROOT: https://cdn.jsdelivr.net/npm/reveal.js@3.8.0
+#+REVEAL_THEME: white
+#+OPTIONS:  reveal_slide_number:c/t toc:nil num:nil
+
+
+* Objectives
+  + Understand iterator and iterable
+  + Implement iterator in python and rust
+
+* Agenda
+  + Questions
+  + What
+  + How
+  + Desugar for loop
+  + Why
+
+* Questions
+  + What is iterator?
+  + What is iterable?
+  + What is the difference between iterator and iterable?
+
+* What
+  + In computer programming, an iterator is an object that enables a programmer to traverse a container, particularly lists.
+** Python
+    + An iterable object is an object that implements __iter__, which is expected to return an iterator object.
+    + An iterator is an object that implements next, which is expected to return the next element of the iterable object that returned it,
+      and raise a StopIteration exception when no more elements are available.
+** Rust
+    + An iterable
+    #+begin_src rust
+    pub trait IntoIterator 
+    where
+        <Self::IntoIter as Iterator>::Item == Self::Item, 
+    {
+        type Item;
+        type IntoIter: Iterator;
+        fn into_iter(self) -> Self::IntoIter;
+    }
+    #+end_src
+
+    + An iterator
+    #+begin_src rust
+    pub trait Iterator {
+        type Item;
+        fn next(&mut self) -> Option<Self::Item>;
+    }
+    #+end_src
+
+* How
+** 
+  :PROPERTIES:
+  :reveal_background: ./images/iterator.jpg
+  :reveal_background_trans: slide
+  :END:
+
+** Python
+
+#+begin_src python
+class GenerateNumbers:
+    def __init__(self, start, end):
+        self.current = start
+        self.high = end
+
+    def __iter__(self):
+        return self
+
+    def __next__(self) -> int:
+        if self.current > self.high:
+            raise StopIteration
+        else:
+            self.current += 1
+            return self.current - 1
+
+
+#+end_src
+
+
+#+REVEAL: split
+
+#+begin_src python
+class AlphaList:
+    def __init__(self, elements: list) -> None:
+        self.alpha_list = elements
+
+    def __iter__(self):
+        return AlphaListIterator(self.alpha_list)
+
+
+class AlphaListIterator:
+    def __init__(self, elements: list) -> None:
+        self.alpha_list = elements
+        self.index = 0
+
+    def __next__(self):
+        try:
+            result = self.alpha_list[self.index]
+        except IndexError:
+            raise StopIteration
+        self.index += 1
+        return result
+
+    def __iter__(self):
+        return self
+
+#+end_src
+
+#+REVEAL: split
+
+#+begin_src python
+if __name__ == "__main__":
+    g = GenerateNumbers(0, 10)
+    for i in g:
+        print(i)
+
+    alpha_list = AlphaList([1, 2, 3])
+    print(alpha_list)
+    for e in alpha_list:
+        print(e)
+
+    for e in alpha_list:
+        print(e)
+
+    it1 = AlphaListIterator([1, 2, 3, 4, 5])
+    for e in it1:
+        print(e)
+
+    for e in it1:
+        print("again...")
+        print(e)
+
+
+#+end_src
+
+** Rust
+#+begin_src rust
+struct AlphaList<T> {
+    alpha_list: Vec<T>,
+}
+
+impl<T> AlphaList<T> {
+    pub fn new(elements: Vec<T>) -> Self {
+        AlphaList {
+            alpha_list: elements,
+        }
+    }
+}
+
+#+end_src
+
+#+REVEAL: split
+
+#+begin_src rust
+struct AlphaListIterator<T> {
+    alpha_list: Vec<T>,
+    index: usize,
+}
+
+impl<T> Iterator for AlphaListIterator<T>
+where
+    T: Clone,
+{
+    type Item = T;
+    fn next(&mut self) -> Option<Self::Item> {
+        match self.alpha_list.get(self.index) {
+            Some(e) => {
+                self.index += 1;
+                return Some(e.clone());
+            }
+            None => return None,
+        }
+    }
+}
+#+end_src
+
+#+REVEAL: split
+
+#+begin_src rust
+impl<T> IntoIterator for AlphaList<T>
+where
+    T: Clone,
+{
+    type Item = T;
+    type IntoIter = AlphaListIterator<T>;
+
+    fn into_iter(self) -> Self::IntoIter {
+        AlphaListIterator {
+            alpha_list: self.alpha_list,
+            index: 0,
+        }
+    }
+}
+
+fn main() {
+    let alpha_list = AlphaList::new(vec![1, 2, 3]);
+    for e in alpha_list {
+        println!("{}", e);
+    }
+}
+#+end_src
+
+** 
+  :PROPERTIES:
+  :reveal_background: ./images/iterator-python.jpg
+  :reveal_background_size: 800px
+  :END:
+
+** 
+  + An iterable should never act as an iterator over itself. In other words, iterables must implement __iter__, but not __next__.
+  + On the other hand, iterators should always be iterable. An iterator’s __iter__ should just return self.
+  + to support multiple traversals of aggregate objects.
+  + only pay for what you need.
+
+
+* Desugar for loop
+  + Python
+#+begin_src python
+it = iter(sequence)
+while True:
+    try:
+        value = next(it)
+except StopIteration:
+        break
+    print(value)
+#+end_src
+
+  + Rust
+#+begin_src rust
+let mut iter = IntoIterator::into_iter(v);
+loop {
+    match iter.next() {
+        Some(x) => { statement },
+        None => break,
+    }
+}
+#+end_src
+
+* Why
+  + In procedural languages it is common to use the subscript operator and a loop counter to loop through all the elements in a sequence such as an array.
+    Although indexing may also be used with some object-oriented containers, the use of iterators may have some advantages:
+  + Counting loops are not suitable to all data structures, in particular to data structures with no or slow random access, like lists or trees.
+
+#+REVEAL: split
+
+  + Iterators can provide a consistent way to iterate on data structures of all kinds, and therefore make the code more readable, reusable, and less sensitive
+    to a change in the data structure.
+  + An iterator can enforce additional restrictions on access, such as ensuring that elements cannot be skipped or that a previously visited element cannot be accessed a second time.
+
+#+REVEAL: split
+
+  + An iterator may allow the container object to be modified without invalidating the iterator. For instance,
+    once an iterator has advanced beyond the first element it may be possible to insert additional elements into the beginning of the container with predictable results.
+    With indexing this is problematic since the index numbers must change.
+  + When scanning datasets that don’t fit in memory, we need a way to fetch the items lazily, that is, one at a time and on demand.
+
+* Q&A
