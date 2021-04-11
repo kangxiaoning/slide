@@ -26,13 +26,13 @@
 <div class="reveal">
 <div class="slides">
 <section id="sec-title-slide">
-<h1 class="title">Iterator in Python and Rust</h1><h2 class="author">kangxiaoning</h2><p class="date">Created: 2021-01-17 Sun 21:59</p>
+<h1 class="title">Iterator in Python and Rust</h1><h2 class="author">kangxiaoning</h2><p class="date">Created: 2021-04-11 Sun 11:22</p>
 </section>
 
 
 <section>
-<section id="slide-orga048f6b">
-<h2 id="orga048f6b">Objectives</h2>
+<section id="slide-org1595457">
+<h2 id="org1595457">Objectives</h2>
 <ul>
 <li>Understand iterator and iterable</li>
 <li>Implement iterator in python and rust</li>
@@ -42,8 +42,8 @@
 </section>
 </section>
 <section>
-<section id="slide-orge787228">
-<h2 id="orge787228">Agenda</h2>
+<section id="slide-org8373ff5">
+<h2 id="org8373ff5">Agenda</h2>
 <ul>
 <li>Questions</li>
 <li>What</li>
@@ -56,8 +56,8 @@
 </section>
 </section>
 <section>
-<section id="slide-org46e2f5a">
-<h2 id="org46e2f5a">Questions</h2>
+<section id="slide-org581b63a">
+<h2 id="org581b63a">Questions</h2>
 <ul>
 <li>What is iterator?</li>
 <li>What is iterable?</li>
@@ -68,15 +68,15 @@
 </section>
 </section>
 <section>
-<section id="slide-orgd5af777">
-<h2 id="orgd5af777">What</h2>
+<section id="slide-org7bfb92c">
+<h2 id="org7bfb92c">What</h2>
 <ul>
 <li>In computer programming, an iterator is an object that enables a programmer to traverse a container, particularly lists.</li>
 
 </ul>
 </section>
-<section id="slide-org89f7f71">
-<h3 id="org89f7f71">Python</h3>
+<section id="slide-orgadefd80">
+<h3 id="orgadefd80">Python</h3>
 <ul>
 <li>An iterable object is an object that implements _<sub>iter</sub>__, which is expected to return an iterator object.</li>
 <li>An iterator is an object that implements next, which is expected to return the next element of the iterable object that returned it,
@@ -84,8 +84,8 @@ and raise a StopIteration exception when no more elements are available.</li>
 
 </ul>
 </section>
-<section id="slide-org720839f">
-<h3 id="org720839f">Rust</h3>
+<section id="slide-org83c84d0">
+<h3 id="org83c84d0">Rust</h3>
 <ul>
 <li>An iterable</li>
 
@@ -119,17 +119,17 @@ and raise a StopIteration exception when no more elements are available.</li>
 </section>
 </section>
 <section>
-<section id="slide-orgab0f694">
-<h2 id="orgab0f694">How</h2>
-<div class="outline-text-2" id="text-orgab0f694">
+<section id="slide-org2b48946">
+<h2 id="org2b48946">How</h2>
+<div class="outline-text-2" id="text-org2b48946">
 </div>
 </section>
-<section id="slide-orgb06e17f" data-background="./images/iterator.jpg" data-background-transition="slide">
-<h3 id="orgb06e17f"></h3>
+<section id="slide-org6dee094" data-background="./images/iterator.jpg" data-background-transition="slide">
+<h3 id="org6dee094"></h3>
 
 </section>
-<section id="slide-orgc8c2635">
-<h3 id="orgc8c2635">Python</h3>
+<section id="slide-org5a3333e">
+<h3 id="org5a3333e">Python</h3>
 <div class="org-src-container">
 
 <pre class="src src-python"><span style="color: #F92672;">class</span> <span style="color: #66D9EF;">GenerateNumbers</span>:
@@ -215,8 +215,8 @@ and raise a StopIteration exception when no more elements are available.</li>
 </div>
 
 </section>
-<section id="slide-org7237ce6">
-<h3 id="org7237ce6">Rust</h3>
+<section id="slide-org2ab449e">
+<h3 id="org2ab449e">Rust</h3>
 <div class="org-src-container">
 
 <pre class="src src-rust"><span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">AlphaList</span><span style="color: #AE81FF;">&lt;</span><span style="color: #66D9EF;">T</span><span style="color: #AE81FF;">&gt;</span> <span style="color: #AE81FF;">{</span>
@@ -292,12 +292,12 @@ and raise a StopIteration exception when no more elements are available.</li>
 </div>
 
 </section>
-<section id="slide-org28970d2" data-background="./images/iterator-python.jpg" data-background-size="800px">
-<h3 id="org28970d2"></h3>
+<section id="slide-org3fcab59" data-background="./images/iterator-python.jpg" data-background-size="800px">
+<h3 id="org3fcab59"></h3>
 
 </section>
-<section id="slide-orgeb4b501">
-<h3 id="orgeb4b501"></h3>
+<section id="slide-org4ef5f56">
+<h3 id="org4ef5f56"></h3>
 <ul>
 <li>An iterable should never act as an iterator over itself. In other words, iterables must implement _<sub>iter</sub>__, but not _<sub>next</sub>__.</li>
 <li>On the other hand, iterators should always be iterable. An iterator’s _<sub>iter</sub>__ should just return self.</li>
@@ -310,8 +310,8 @@ and raise a StopIteration exception when no more elements are available.</li>
 </section>
 </section>
 <section>
-<section id="slide-orgd216186">
-<h2 id="orgd216186">Desugar for loop</h2>
+<section id="slide-orgb8a9298">
+<h2 id="orgb8a9298">Desugar for loop</h2>
 <ul>
 <li>Python</li>
 
@@ -347,8 +347,8 @@ and raise a StopIteration exception when no more elements are available.</li>
 </section>
 </section>
 <section>
-<section id="slide-org1200bd6">
-<h2 id="org1200bd6">Why</h2>
+<section id="slide-orgd7970f9">
+<h2 id="orgd7970f9">Why</h2>
 <ul>
 <li>In procedural languages it is common to use the subscript operator and a loop counter to loop through all the elements in a sequence such as an array.
 Although indexing may also be used with some object-oriented containers, the use of iterators may have some advantages:</li>
@@ -380,8 +380,8 @@ With indexing this is problematic since the index numbers must change.</li>
 </section>
 </section>
 <section>
-<section id="slide-org31ca9a6">
-<h2 id="org31ca9a6">Q&amp;A</h2>
+<section id="slide-org6fdbacc">
+<h2 id="org6fdbacc">Q&amp;A</h2>
 </section>
 </section>
 </div>
@@ -404,7 +404,6 @@ mouseWheel: false,
 fragmentInURL: false,
 hashOneBasedIndex: false,
 pdfSeparateFragments: true,
-
 overview: true,
 
 theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
