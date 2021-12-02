@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>Kubernetes Networking</title>
+<meta name="author" content="kangxiaoning"/>
+<style type="text/css">
+.underline { text-decoration: underline; }
+</style>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@3.8.0/css/reveal.css"/>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@3.8.0/css/theme/white.css" id="theme"/>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@3.8.0/lib/css/zenburn.css"/>
+
+<!-- If the query includes 'print-pdf', include the PDF print sheet -->
+<script>
+    if( window.location.search.match( /print-pdf/gi ) ) {
+        var link = document.createElement( 'link' );
+        link.rel = 'stylesheet';
+        link.type = 'text/css';
+        link.href = 'https://cdn.jsdelivr.net/npm/reveal.js@3.8.0/css/print/pdf.css';
+        document.getElementsByTagName( 'head' )[0].appendChild( link );
+    }
+</script>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+<section id="sec-title-slide">
+<h1 class="title">Kubernetes Networking</h1><h2 class="author">kangxiaoning</h2><p class="date">Created: 2021-12-02 Thu 16:13</p>
+</section>
+
+
+<section>
+<section id="slide-org85b2b0e">
+<h2 id="org85b2b0e">Objectives</h2>
+<ul>
+<li class="fragment appear">Understand networking and Linux primitives that power Kubernetes</li>
+<li class="fragment appear">Understand the Container Network Interface (CNI) project</li>
+<li class="fragment appear">Understand the Kubernetes networking model</li>
+
+</ul>
+
+
+</section>
+</section>
+<section>
+<section id="slide-orgb7b8bc6">
+<h2 id="orgb7b8bc6">Agenda</h2>
+<ul>
+<li>TCP/IP and OSI</li>
+
+</ul>
+
+
+</section>
+</section>
+<section>
+<section id="slide-orgb728534">
+<h2 id="orgb728534">TCP/IP and OSI</h2>
+<div class="outline-text-2" id="text-orgb728534">
+</div>
+</section>
+<section id="slide-orge9e4913" data-background="./images/tcpip-and-osi.png" data-background-size="500px">
+<h3 id="orge9e4913"></h3>
+
+</section>
+<section id="slide-orgc45d638">
+<h3 id="orgc45d638">IP Header</h3>
+<div class="outline-text-3" id="text-orgc45d638">
+</div>
+</section>
+<section id="slide-orgc4b5469" data-background="./images/ipv4-header.svg" data-background-size="1000px">
+<h4 id="orgc4b5469"></h4>
+
+</section>
+<section id="slide-orgde3885d">
+<h4 id="orgde3885d">IP Header fields</h4>
+<ul>
+<li><b>Internet Header Length (IHL)</b>
+<ul>
+<li>The IPv4 header has a variable size due to the optional 14th field option.</li>
+
+</ul></li>
+<li><b>Identification</b>
+<ul>
+<li>This is the identification field and is used for uniquely identifying the group of fragments of a single IP datagram.</li>
+
+</ul></li>
+
+</ul>
+
+</section>
+<section>
+
+<ul>
+<li><b>Flags</b>
+<ul>
+<li>This is used to control or identify fragments. In order from most significant to least:</li>
+<li>bit 0: Reserved, set to zero</li>
+<li>bit 1: Do not Fragment</li>
+<li>bit 2: More Fragments</li>
+
+</ul></li>
+<li><b>Time To Live (TTL)</b>
+<ul>
+<li>An 8-bit time to live field helps prevent datagrams from going in circles on a network.</li>
+
+</ul></li>
+
+</ul>
+
+
+</section>
+<section id="slide-orgbe3339b">
+<h4 id="orgbe3339b">IP Header in wireshark</h4>
+</section>
+<section id="slide-orga4d9cfd" data-background="./images/ipv4-header-wireshark.png" data-background-size="1400px">
+<h4 id="orga4d9cfd"></h4>
+
+</section>
+<section id="slide-orge21a311">
+<h3 id="orge21a311">TCP Header</h3>
+<div class="outline-text-3" id="text-orge21a311">
+</div>
+</section>
+<section id="slide-orge7d1c3a" data-background="./images/tcp-header.svg" data-background-size="1000px">
+<h4 id="orge7d1c3a"></h4>
+
+</section>
+<section id="slide-orgaaf8358">
+<h4 id="orgaaf8358">TCP Header fields</h4>
+<ul>
+<li><b>Sequence number (32 bits)</b>
+<ul>
+<li>If the SYN flag is set, this is the initial sequence number. The sequence number of the first data byte and the acknowledged number in the corresponding ACK is this sequence number plus 1. It is also used to reassemble data if it arrives out of order.</li>
+
+</ul></li>
+
+</ul>
+
+</section>
+<section>
+
+<ul>
+<li><b>Acknowledgment number (32 bits)</b>
+<ul>
+<li>If the ACK flag is set, then this field’s value is the next sequence number of the ACK the sender is expecting. This acknowledges receipt of all preceding bytes (if any). Each end’s first ACK acknowledges the other end’s initial sequence number itself, but no data has been sent.</li>
+
+</ul></li>
+
+</ul>
+
+</section>
+<section>
+
+<ul>
+<li><b>Flags (9 bits)</b>
+<ul>
+<li><b>NS–ECN-nonce</b>: Concealment protection.</li>
+<li><b>CWR</b>: Congestion Window Reduced; the sender reduced its sending rate.</li>
+<li><b>ECE</b>: ECN Echo; the sender received an earlier congestion notification.</li>
+<li><b>URG</b>: Urgent; the Urgent Pointer field is valid, but this is rarely used.</li>
+<li><b>ACK</b>: Acknowledgment; the Acknowledgment Number field is valid and is always on after a connection is established.</li>
+
+</ul></li>
+
+</ul>
+
+</section>
+<section>
+
+<ul>
+<li><b>PSH</b>: Push; the receiver should pass this data to the application as soon as possible.</li>
+<li><b>RST</b>: Reset the connection or connection abort, usually because of an error.</li>
+<li><b>SYN</b>: Synchronize sequence numbers to initiate a connection.</li>
+<li><b>FIN</b>: The sender of the segment is finished sending data to its peer.</li>
+
+</ul>
+
+</section>
+<section>
+
+<ul>
+<li><b>Window size (16 bits)</b>
+<ul>
+<li>This is the size of the receive window.</li>
+
+</ul></li>
+<li><b>Options</b>
+<ul>
+<li>Variable 0–320 bits, in units of 32 bits.</li>
+
+</ul></li>
+
+<li><b>Padding</b>
+<ul>
+<li>The TCP header padding is used to ensure that the TCP header ends, and data begins on a 32-bit boundary.</li>
+
+</ul></li>
+
+</ul>
+
+</section>
+<section id="slide-org783ce20">
+<h4 id="org783ce20">TCP Header in wireshark</h4>
+</section>
+<section id="slide-org088b873" data-background="./images/tcp-header-wireshark.png" data-background-transition="slide">
+<h4 id="org088b873"></h4>
+
+</section>
+<section id="slide-org5b2fd1f">
+<h4 id="org5b2fd1f">TCP State</h4>
+</section>
+<section id="slide-org5a8dda2" data-background="./images/tcp-state.svg" data-background-size="1000px">
+<h4 id="org5a8dda2"></h4>
+
+</section>
+<section id="slide-org13dd545">
+<h4 id="org13dd545">TCP State</h4>
+<ul>
+<li><b>LISTEN</b> (server)
+<ul>
+<li>Represents waiting for a connection request from any remote TCP and port</li>
+
+</ul></li>
+
+<li><b>SYN-SENT</b> (client)
+<ul>
+<li>Represents waiting for a matching connection request after sending a connection request</li>
+
+</ul></li>
+
+</ul>
+
+</section>
+<section>
+
+<ul>
+<li><b>SYN-RECEIVED</b> (server)
+<ul>
+<li>Represents waiting for a confirming connection request acknowledgment after having both received and sent a connection request</li>
+
+</ul></li>
+
+<li><b>ESTABLISHED</b> (both server and client)
+<ul>
+<li>Represents an open connection; data received can be delivered to the user—the intermediate state for the data transfer phase of the connection</li>
+
+</ul></li>
+
+</ul>
+
+</section>
+<section>
+
+<ul>
+<li><b>FIN-WAIT-1</b> (both server and client)
+<ul>
+<li>Represents waiting for a connection termination request from the remote host</li>
+
+</ul></li>
+
+<li><b>FIN-WAIT-2</b> (both server and client)
+<ul>
+<li>Represents waiting for a connection termination request from the remote TCP</li>
+
+</ul></li>
+
+<li><b>CLOSE-WAIT</b> (both server and client)
+<ul>
+<li>Represents waiting for a local user’s connection termination request</li>
+
+</ul></li>
+
+</ul>
+
+</section>
+<section>
+
+<ul>
+<li><b>CLOSING</b> (both server and client)
+<ul>
+<li>Represents waiting for a connection termination request acknowledgment from the remote TCP</li>
+
+</ul></li>
+
+<li><b>LAST-ACK</b> (both server and client)
+<ul>
+<li>Represents waiting for an acknowledgment of the connection termination request previously sent to the remote host</li>
+
+</ul></li>
+
+</ul>
+
+</section>
+<section>
+
+<ul>
+<li><b>TIME-WAIT</b> (either server or client)
+<ul>
+<li>Represents waiting for enough time to pass to ensure the remote host received the acknowledgment of its connection termination request</li>
+
+</ul></li>
+
+<li><b>CLOSED</b> (both server and client)
+<ul>
+<li>Represents no connection state at all</li>
+
+</ul></li>
+
+</ul>
+
+</section>
+<section id="slide-org2cf96f9">
+<h3 id="org2cf96f9">TLS Handshake</h3>
+</section>
+<section id="slide-orge427f6f" data-background="./images/tls-handshake.png" data-background-size="800px">
+<h3 id="orge427f6f"></h3>
+
+</section>
+<section id="slide-org8ae5bc9">
+<h3 id="org8ae5bc9"></h3>
+<ul>
+<li>1. <b>ClientHello</b>: This contains the cipher suites supported by the client and a random number.</li>
+<li>2. <b>ServerHello</b>: This message contains the cipher it supports and a random number.</li>
+<li>3. <b>ServerCertificate</b>: This contains the server’s certificate and its server public key.</li>
+
+</ul>
+
+</section>
+<section>
+
+<ul>
+<li>4. <b>ServerHelloDone</b>: This is the end of the ServerHello. If the client receives a request for its certificate, it sends a ClientCertificate message.</li>
+<li>5. <b>ClientKeyExchange</b>: Based on the server’s random number, our client generates a random premaster secret, encrypts it with the server’s public key certificate, and sends it to the server.</li>
+<li>6. <b>Key Generation</b>: The client and server generate a master secret from the premaster secret and exchange random values.</li>
+
+</ul>
+
+</section>
+<section>
+
+<ul>
+<li>7. <b>ChangeCipherSpec</b>: Now the client and server swap their ChangeCipherSpec to begin using the new keys for encryption.</li>
+<li>8. <b>Finished Client</b>: The client sends the finished message to confirm that the key exchange and authentication were successful.</li>
+<li>9. <b>Finished Server</b>: Now, the server sends the finished message to the client to end the handshake.</li>
+
+</ul>
+
+</section>
+<section id="slide-org9ba65a7" data-background="./images/tls-01.png">
+<h3 id="org9ba65a7"></h3>
+
+</section>
+<section id="slide-orgac6bc68" data-background="./images/tls-02.png">
+<h3 id="orgac6bc68"></h3>
+
+</section>
+<section id="slide-orgd563498" data-background="./images/tls-03.png">
+<h3 id="orgd563498"></h3>
+
+</section>
+<section id="slide-orgf5d4f74" data-background="./images/tls-04.png">
+<h3 id="orgf5d4f74"></h3>
+
+</section>
+<section id="slide-org0ee7926">
+<h3 id="org0ee7926">VXLAN Header</h3>
+</section>
+<section id="slide-orgbe84d7b" data-background="./images/vxlan-header.png" data-background-size="1000px">
+<h3 id="orgbe84d7b"></h3>
+
+</section>
+<section id="slide-org24f03b0">
+<h3 id="org24f03b0">VXLAN Header in wireshark</h3>
+</section>
+<section id="slide-orga254d70" data-background="./images/vxlan-header-wireshark.png" data-background-transition="slide">
+<h3 id="orga254d70"></h3>
+</section>
+</section>
+</div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@3.8.0/lib/js/head.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@3.8.0/js/reveal.js"></script>
+<script>
+// Full list of configuration options available here:
+// https://github.com/hakimel/reveal.js#configuration
+Reveal.initialize({
+
+controls: true,
+progress: true,
+history: false,
+center: true,
+slideNumber: 'c/t',
+rollingLinks: false,
+keyboard: true,
+mouseWheel: false,
+fragmentInURL: false,
+hashOneBasedIndex: false,
+pdfSeparateFragments: true,
+overview: true,
+
+theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+transition: Reveal.getQueryHash().transition || 'convex', // see README of reveal.js for options
+transitionSpeed: 'default',
+
+// Optional libraries used to extend reveal.js
+dependencies: [
+,
+ { src: 'https://cdn.jsdelivr.net/npm/reveal.js@3.8.0/plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+ { src: 'https://cdn.jsdelivr.net/npm/reveal.js@3.8.0/plugin/search/search.js', async: true, condition: function() { return !!document.body.classList; } }]
+
+});
+</script>
+</body>
+</html>
