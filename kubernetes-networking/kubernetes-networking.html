@@ -27,13 +27,13 @@
 <div class="reveal">
 <div class="slides">
 <section id="sec-title-slide">
-<h1 class="title">Kubernetes Networking</h1><h2 class="author">kangxiaoning</h2><p class="date">Created: 2021-12-02 Thu 16:13</p>
+<h1 class="title">Kubernetes Networking</h1><h2 class="author">kangxiaoning</h2><p class="date">Created: 2021-12-02 Thu 19:58</p>
 </section>
 
 
 <section>
-<section id="slide-org85b2b0e">
-<h2 id="org85b2b0e">Objectives</h2>
+<section id="slide-orgaae4d75">
+<h2 id="orgaae4d75">Objectives</h2>
 <ul>
 <li class="fragment appear">Understand networking and Linux primitives that power Kubernetes</li>
 <li class="fragment appear">Understand the Container Network Interface (CNI) project</li>
@@ -45,10 +45,11 @@
 </section>
 </section>
 <section>
-<section id="slide-orgb7b8bc6">
-<h2 id="orgb7b8bc6">Agenda</h2>
+<section id="slide-orgcf00c46">
+<h2 id="orgcf00c46">Agenda</h2>
 <ul>
 <li>TCP/IP and OSI</li>
+<li>Linux Networking</li>
 
 </ul>
 
@@ -56,26 +57,27 @@
 </section>
 </section>
 <section>
-<section id="slide-orgb728534">
-<h2 id="orgb728534">TCP/IP and OSI</h2>
-<div class="outline-text-2" id="text-orgb728534">
+<section id="slide-orge699d22">
+<h2 id="orge699d22">TCP/IP and OSI</h2>
+<div class="outline-text-2" id="text-orge699d22">
 </div>
 </section>
-<section id="slide-orge9e4913" data-background="./images/tcpip-and-osi.png" data-background-size="500px">
-<h3 id="orge9e4913"></h3>
+<section id="slide-orgacffc91" data-background="./images/tcpip-and-osi.png" data-background-size="500px">
+<h3 id="orgacffc91"></h3>
 
 </section>
-<section id="slide-orgc45d638">
-<h3 id="orgc45d638">IP Header</h3>
-<div class="outline-text-3" id="text-orgc45d638">
+<section id="slide-org4c568a9">
+<h3 id="org4c568a9">IP Header</h3>
+<div class="outline-text-3" id="text-org4c568a9">
 </div>
 </section>
-<section id="slide-orgc4b5469" data-background="./images/ipv4-header.svg" data-background-size="1000px">
-<h4 id="orgc4b5469"></h4>
+<section id="slide-orgee15df7" data-background="./images/ipv4-header.svg" data-background-size="1000px">
+<h4 id="orgee15df7"></h4>
 
 </section>
-<section id="slide-orgde3885d">
-<h4 id="orgde3885d">IP Header fields</h4>
+<section id="slide-org86c8580">
+<h4 id="org86c8580">IP Header fields</h4>
+<div style="font-size: 50%;">
 <ul>
 <li><b>Internet Header Length (IHL)</b>
 <ul>
@@ -87,13 +89,6 @@
 <li>This is the identification field and is used for uniquely identifying the group of fragments of a single IP datagram.</li>
 
 </ul></li>
-
-</ul>
-
-</section>
-<section>
-
-<ul>
 <li><b>Flags</b>
 <ul>
 <li>This is used to control or identify fragments. In order from most significant to least:</li>
@@ -109,52 +104,39 @@
 </ul></li>
 
 </ul>
-
-
-</section>
-<section id="slide-orgbe3339b">
-<h4 id="orgbe3339b">IP Header in wireshark</h4>
-</section>
-<section id="slide-orga4d9cfd" data-background="./images/ipv4-header-wireshark.png" data-background-size="1400px">
-<h4 id="orga4d9cfd"></h4>
+</div>
 
 </section>
-<section id="slide-orge21a311">
-<h3 id="orge21a311">TCP Header</h3>
-<div class="outline-text-3" id="text-orge21a311">
+<section id="slide-org2eda5fc">
+<h4 id="org2eda5fc">IP Header in wireshark</h4>
+</section>
+<section id="slide-org28e2fbb" data-background="./images/ipv4-header-wireshark.png" data-background-size="1400px">
+<h4 id="org28e2fbb"></h4>
+
+</section>
+<section id="slide-org7356776">
+<h3 id="org7356776">TCP Header</h3>
+<div class="outline-text-3" id="text-org7356776">
 </div>
 </section>
-<section id="slide-orge7d1c3a" data-background="./images/tcp-header.svg" data-background-size="1000px">
-<h4 id="orge7d1c3a"></h4>
+<section id="slide-orgfdb205a" data-background="./images/tcp-header.svg" data-background-size="1000px">
+<h4 id="orgfdb205a"></h4>
 
 </section>
-<section id="slide-orgaaf8358">
-<h4 id="orgaaf8358">TCP Header fields</h4>
+<section id="slide-orga5c394e">
+<h4 id="orga5c394e">TCP Header fields</h4>
+<div style="font-size: 50%;">
 <ul>
 <li><b>Sequence number (32 bits)</b>
 <ul>
 <li>If the SYN flag is set, this is the initial sequence number. The sequence number of the first data byte and the acknowledged number in the corresponding ACK is this sequence number plus 1. It is also used to reassemble data if it arrives out of order.</li>
 
 </ul></li>
-
-</ul>
-
-</section>
-<section>
-
-<ul>
 <li><b>Acknowledgment number (32 bits)</b>
 <ul>
 <li>If the ACK flag is set, then this field’s value is the next sequence number of the ACK the sender is expecting. This acknowledges receipt of all preceding bytes (if any). Each end’s first ACK acknowledges the other end’s initial sequence number itself, but no data has been sent.</li>
 
 </ul></li>
-
-</ul>
-
-</section>
-<section>
-
-<ul>
 <li><b>Flags (9 bits)</b>
 <ul>
 <li><b>NS–ECN-nonce</b>: Concealment protection.</li>
@@ -166,22 +148,17 @@
 </ul></li>
 
 </ul>
+</div>
 
 </section>
 <section>
 
+<div style="font-size: 50%;">
 <ul>
 <li><b>PSH</b>: Push; the receiver should pass this data to the application as soon as possible.</li>
 <li><b>RST</b>: Reset the connection or connection abort, usually because of an error.</li>
 <li><b>SYN</b>: Synchronize sequence numbers to initiate a connection.</li>
 <li><b>FIN</b>: The sender of the segment is finished sending data to its peer.</li>
-
-</ul>
-
-</section>
-<section>
-
-<ul>
 <li><b>Window size (16 bits)</b>
 <ul>
 <li>This is the size of the receive window.</li>
@@ -192,7 +169,6 @@
 <li>Variable 0–320 bits, in units of 32 bits.</li>
 
 </ul></li>
-
 <li><b>Padding</b>
 <ul>
 <li>The TCP header padding is used to ensure that the TCP header ends, and data begins on a 32-bit boundary.</li>
@@ -200,24 +176,26 @@
 </ul></li>
 
 </ul>
+</div>
 
 </section>
-<section id="slide-org783ce20">
-<h4 id="org783ce20">TCP Header in wireshark</h4>
+<section id="slide-org54c861f">
+<h4 id="org54c861f">TCP Header in wireshark</h4>
 </section>
-<section id="slide-org088b873" data-background="./images/tcp-header-wireshark.png" data-background-transition="slide">
-<h4 id="org088b873"></h4>
+<section id="slide-orgc6f1472" data-background="./images/tcp-header-wireshark.png" data-background-transition="slide">
+<h4 id="orgc6f1472"></h4>
 
 </section>
-<section id="slide-org5b2fd1f">
-<h4 id="org5b2fd1f">TCP State</h4>
+<section id="slide-org1994caf">
+<h4 id="org1994caf">TCP State</h4>
 </section>
-<section id="slide-org5a8dda2" data-background="./images/tcp-state.svg" data-background-size="1000px">
-<h4 id="org5a8dda2"></h4>
+<section id="slide-org02bfb36" data-background="./images/tcp-state.svg" data-background-size="1000px">
+<h4 id="org02bfb36"></h4>
 
 </section>
-<section id="slide-org13dd545">
-<h4 id="org13dd545">TCP State</h4>
+<section id="slide-orgba8e972">
+<h4 id="orgba8e972">TCP State</h4>
+<div style="font-size: 50%;">
 <ul>
 <li><b>LISTEN</b> (server)
 <ul>
@@ -231,12 +209,6 @@
 
 </ul></li>
 
-</ul>
-
-</section>
-<section>
-
-<ul>
 <li><b>SYN-RECEIVED</b> (server)
 <ul>
 <li>Represents waiting for a confirming connection request acknowledgment after having both received and sent a connection request</li>
@@ -249,12 +221,6 @@
 
 </ul></li>
 
-</ul>
-
-</section>
-<section>
-
-<ul>
 <li><b>FIN-WAIT-1</b> (both server and client)
 <ul>
 <li>Represents waiting for a connection termination request from the remote host</li>
@@ -267,18 +233,20 @@
 
 </ul></li>
 
+</ul>
+</div>
+
+</section>
+<section>
+
+<div style="font-size: 50%;">
+<ul>
 <li><b>CLOSE-WAIT</b> (both server and client)
 <ul>
 <li>Represents waiting for a local user’s connection termination request</li>
 
 </ul></li>
 
-</ul>
-
-</section>
-<section>
-
-<ul>
 <li><b>CLOSING</b> (both server and client)
 <ul>
 <li>Represents waiting for a connection termination request acknowledgment from the remote TCP</li>
@@ -291,12 +259,6 @@
 
 </ul></li>
 
-</ul>
-
-</section>
-<section>
-
-<ul>
 <li><b>TIME-WAIT</b> (either server or client)
 <ul>
 <li>Represents waiting for enough time to pass to ensure the remote host received the acknowledgment of its connection termination request</li>
@@ -310,73 +272,199 @@
 </ul></li>
 
 </ul>
+</div>
 
 </section>
-<section id="slide-org2cf96f9">
-<h3 id="org2cf96f9">TLS Handshake</h3>
+<section id="slide-org147dfec">
+<h3 id="org147dfec">TLS Handshake</h3>
 </section>
-<section id="slide-orge427f6f" data-background="./images/tls-handshake.png" data-background-size="800px">
-<h3 id="orge427f6f"></h3>
+<section id="slide-orgee15c7a" data-background="./images/tls-handshake.png" data-background-size="800px">
+<h3 id="orgee15c7a"></h3>
 
 </section>
-<section id="slide-org8ae5bc9">
-<h3 id="org8ae5bc9"></h3>
+<section id="slide-orgc09d442">
+<h3 id="orgc09d442">TLS Handshake</h3>
+<div style="font-size: 50%;">
 <ul>
 <li>1. <b>ClientHello</b>: This contains the cipher suites supported by the client and a random number.</li>
 <li>2. <b>ServerHello</b>: This message contains the cipher it supports and a random number.</li>
 <li>3. <b>ServerCertificate</b>: This contains the server’s certificate and its server public key.</li>
-
-</ul>
-
-</section>
-<section>
-
-<ul>
 <li>4. <b>ServerHelloDone</b>: This is the end of the ServerHello. If the client receives a request for its certificate, it sends a ClientCertificate message.</li>
 <li>5. <b>ClientKeyExchange</b>: Based on the server’s random number, our client generates a random premaster secret, encrypts it with the server’s public key certificate, and sends it to the server.</li>
 <li>6. <b>Key Generation</b>: The client and server generate a master secret from the premaster secret and exchange random values.</li>
-
-</ul>
-
-</section>
-<section>
-
-<ul>
 <li>7. <b>ChangeCipherSpec</b>: Now the client and server swap their ChangeCipherSpec to begin using the new keys for encryption.</li>
 <li>8. <b>Finished Client</b>: The client sends the finished message to confirm that the key exchange and authentication were successful.</li>
 <li>9. <b>Finished Server</b>: Now, the server sends the finished message to the client to end the handshake.</li>
 
 </ul>
+</div>
 
 </section>
-<section id="slide-org9ba65a7" data-background="./images/tls-01.png">
-<h3 id="org9ba65a7"></h3>
+<section id="slide-org87e3868" data-background="./images/tls-01.png">
+<h3 id="org87e3868"></h3>
 
 </section>
-<section id="slide-orgac6bc68" data-background="./images/tls-02.png">
-<h3 id="orgac6bc68"></h3>
+<section id="slide-org66130ba" data-background="./images/tls-02.png">
+<h3 id="org66130ba"></h3>
 
 </section>
-<section id="slide-orgd563498" data-background="./images/tls-03.png">
-<h3 id="orgd563498"></h3>
+<section id="slide-orgc590642" data-background="./images/tls-03.png">
+<h3 id="orgc590642"></h3>
 
 </section>
-<section id="slide-orgf5d4f74" data-background="./images/tls-04.png">
-<h3 id="orgf5d4f74"></h3>
+<section id="slide-org565b915" data-background="./images/tls-04.png">
+<h3 id="org565b915"></h3>
 
 </section>
-<section id="slide-org0ee7926">
-<h3 id="org0ee7926">VXLAN Header</h3>
+<section id="slide-orga91ff5b">
+<h3 id="orga91ff5b">VXLAN Header</h3>
+<div class="outline-text-3" id="text-orga91ff5b">
+</div>
 </section>
-<section id="slide-orgbe84d7b" data-background="./images/vxlan-header.png" data-background-size="1000px">
-<h3 id="orgbe84d7b"></h3>
+<section id="slide-org4c619d5" data-background="./images/vxlan-header.png" data-background-size="1000px">
+<h4 id="org4c619d5"></h4>
 
 </section>
-<section id="slide-org24f03b0">
-<h3 id="org24f03b0">VXLAN Header in wireshark</h3>
+<section id="slide-org21e0d0d">
+<h3 id="org21e0d0d">VXLAN Header in wireshark</h3>
+<div class="outline-text-3" id="text-org21e0d0d">
+</div>
 </section>
-<section id="slide-orga254d70" data-background="./images/vxlan-header-wireshark.png" data-background-transition="slide">
-<h3 id="orga254d70"></h3>
+<section id="slide-orgc0a42f7" data-background="./images/vxlan-header-wireshark.png" data-background-transition="slide">
+<h4 id="orgc0a42f7"></h4>
+
+
+</section>
+</section>
+<section>
+<section id="slide-orgc7061b1">
+<h2 id="orgc7061b1">Linux Networking</h2>
+<div class="outline-text-2" id="text-orgc7061b1">
+</div>
+</section>
+<section id="slide-org28843d5">
+<h3 id="org28843d5">Bridge and Veth</h3>
+</section>
+<section id="slide-orgda5799a">
+<h3 id="orgda5799a">What is <b>bridge</b> and <b>veth</b> ?</h3>
+<div style="font-size: 50%;">
+<ul>
+<li><b>Bridge</b>
+<ul>
+<li>the bridge functions like a network switch between network interfaces on a host, seamlessly connecting them.</li>
+
+</ul></li>
+
+</ul>
+<div class="org-src-container">
+
+<pre><code class="bash" ># # Add a new bridge interface named br0.
+# ip link add br0 type bridge
+# # Attach eth0 to our bridge.
+# ip link set eth0 master br0
+# # Attach veth to our bridge.
+# ip link set veth master br0
+</code></pre>
+</div>
+
+<ul>
+<li><b>Veth</b>
+<ul>
+<li>The veth device is a local Ethernet tunnel. Veth devices are created in pairs. Packets transmitted on one device in the pair are immediately received on the other device. When either device is down, the link state of the pair is down. Adding a bridge to Linux can be done with using the <code>brctl</code> commands or <code>ip</code>.</li>
+
+</ul></li>
+
+</ul>
+<div class="org-src-container">
+
+<pre><code class="bash" ># ip netns add net1
+# ip netns add net2
+# ip link add veth1 netns net1 type veth peer name veth2 netns net2
+</code></pre>
+</div>
+
+<ul>
+<li>参考 <a href="https://developers.redhat.com/blog/2018/10/22/introduction-to-linux-interfaces-for-virtual-networking">Introduction to Linux interfaces for virtual networking</a></li>
+
+</ul>
+</div>
+
+</section>
+<section id="slide-orgebe1a6d" data-background="./images/linux-bridge-interface.png" data-background-size="400px">
+<h3 id="orgebe1a6d"></h3>
+
+</section>
+<section id="slide-org61e633a">
+<h3 id="org61e633a">Netfilter</h3>
+<div style="font-size: 60%;">
+<ul>
+<li>The <b>netfilter project</b> is a community-driven collaborative FOSS project that provides packet filtering software for the Linux 2.4.x and later kernel series. The netfilter project is commonly associated with iptables and its successor nftables.</li>
+<li>The <b>netfilter</b> project enables packet filtering, network address [and port] translation (NA[P]T), packet logging, userspace packet queueing and other packet mangling.</li>
+<li>The <b>netfilter hooks</b> are a framework inside the Linux kernel that allows kernel modules to register callback functions at different locations of the Linux network stack. The registered callback function is then called back for every packet that traverses the respective hook within the Linux network stack.</li>
+<li><b>iptables</b> is a generic firewalling software that allows you to define rulesets. Each rule within an IP table consists of a number of classifiers (iptables matches) and one connected action (iptables target).</li>
+<li><b>nftables</b> is the successor of iptables, it allows for much more flexible, scalable and performance packet classification. This is where all the fancy new features are developed.</li>
+
+</ul>
+</div>
+
+</section>
+<section id="slide-org2bf9164" data-background="./images/netfilter-packet-flow.svg" data-background-size="1400px">
+<h3 id="org2bf9164"></h3>
+
+</section>
+<section id="slide-orgb7210c3">
+<h3 id="orgb7210c3">Netfilter hooks</h3>
+<div style="font-size: 50%;">
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">Netfilter hook</th>
+<th scope="col" class="org-left">Iptables chain name</th>
+<th scope="col" class="org-left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left"><code>NF_IP_PRE_ROUTING</code></td>
+<td class="org-left">PREROUTING</td>
+<td class="org-left">Triggers when a packet arrives from an external system.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>NF_IP_LOCAL_IN</code></td>
+<td class="org-left">INPUT</td>
+<td class="org-left">Triggers when a packet’s destination IP address matches this machine.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>NF_IP_FORWARD</code></td>
+<td class="org-left">NAT</td>
+<td class="org-left">Triggers for packets where neither source nor destination matches the machine’s IP addresses.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>NF_IP_LOCAL_OUT</code></td>
+<td class="org-left">OUTPUT</td>
+<td class="org-left">Triggers when a packet, originating from the machine, is leaving the machine.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>NF_IP_POST_ROUTING</code></td>
+<td class="org-left">POSTROUTING</td>
+<td class="org-left">Triggers when any packet (regardless of origin) is leaving the machine.</td>
+</tr>
+</tbody>
+</table>
+</div>
 </section>
 </section>
 </div>

@@ -16,6 +16,7 @@
 
 * Agenda
   + TCP/IP and OSI
+  + Linux Networking
 
 
 * TCP/IP and OSI
@@ -34,13 +35,12 @@
     :END:
 
 *** IP Header fields
+
+    #+REVEAL_HTML: <div style="font-size: 50%;">
     - *Internet Header Length (IHL)*
       - The IPv4 header has a variable size due to the optional 14th field option.
     - *Identification*
       - This is the identification field and is used for uniquely identifying the group of fragments of a single IP datagram.
-
-#+REVEAL: split
-
     - *Flags*
       - This is used to control or identify fragments. In order from most significant to least:
       - bit 0: Reserved, set to zero
@@ -48,7 +48,7 @@
       - bit 2: More Fragments
     - *Time To Live (TTL)*
       - An 8-bit time to live field helps prevent datagrams from going in circles on a network.
-
+    #+REVEAL_HTML: </div>
 
 *** IP Header in wireshark
 *** 
@@ -65,39 +65,33 @@
     :END:
 
 *** TCP Header fields
+    #+REVEAL_HTML: <div style="font-size: 50%;">
     - *Sequence number (32 bits)*
       - If the SYN flag is set, this is the initial sequence number. The sequence number of the first data byte and the acknowledged number in the corresponding ACK is this sequence number plus 1. It is also used to reassemble data if it arrives out of order.
-
-#+REVEAL: split
-
     - *Acknowledgment number (32 bits)*
       - If the ACK flag is set, then this field’s value is the next sequence number of the ACK the sender is expecting. This acknowledges receipt of all preceding bytes (if any). Each end’s first ACK acknowledges the other end’s initial sequence number itself, but no data has been sent.
-
-#+REVEAL: split
-
     - *Flags (9 bits)*
       - *NS–ECN-nonce*: Concealment protection.
       - *CWR*: Congestion Window Reduced; the sender reduced its sending rate.
       - *ECE*: ECN Echo; the sender received an earlier congestion notification.
       - *URG*: Urgent; the Urgent Pointer field is valid, but this is rarely used.
       - *ACK*: Acknowledgment; the Acknowledgment Number field is valid and is always on after a connection is established.
+    #+REVEAL_HTML: </div>
 
-#+REVEAL: split
+    #+REVEAL: split
 
+    #+REVEAL_HTML: <div style="font-size: 50%;">
       - *PSH*: Push; the receiver should pass this data to the application as soon as possible.
       - *RST*: Reset the connection or connection abort, usually because of an error.
       - *SYN*: Synchronize sequence numbers to initiate a connection.
       - *FIN*: The sender of the segment is finished sending data to its peer.
-
-#+REVEAL: split
-
-    - *Window size (16 bits)*
-      - This is the size of the receive window.
-    - *Options*
-      - Variable 0–320 bits, in units of 32 bits.
-
-    - *Padding*
-      - The TCP header padding is used to ensure that the TCP header ends, and data begins on a 32-bit boundary.
+      - *Window size (16 bits)*
+        - This is the size of the receive window.
+      - *Options*
+        - Variable 0–320 bits, in units of 32 bits.
+      - *Padding*
+        - The TCP header padding is used to ensure that the TCP header ends, and data begins on a 32-bit boundary.
+      #+REVEAL_HTML: </div>
 
 *** TCP Header in wireshark
 *** 
@@ -115,13 +109,12 @@
 
 *** TCP State
 
+    #+REVEAL_HTML: <div style="font-size: 50%;">
     - *LISTEN* (server)
       - Represents waiting for a connection request from any remote TCP and port
 
     - *SYN-SENT* (client)
       - Represents waiting for a matching connection request after sending a connection request
-
-    #+REVEAL: split
 
     - *SYN-RECEIVED* (server)
       - Represents waiting for a confirming connection request acknowledgment after having both received and sent a connection request
@@ -129,18 +122,18 @@
     - *ESTABLISHED* (both server and client)
       - Represents an open connection; data received can be delivered to the user—the intermediate state for the data transfer phase of the connection
 
-    #+REVEAL: split
-
     - *FIN-WAIT-1* (both server and client)
       - Represents waiting for a connection termination request from the remote host
 
     - *FIN-WAIT-2* (both server and client)
       - Represents waiting for a connection termination request from the remote TCP
-
-    - *CLOSE-WAIT* (both server and client)
-      - Represents waiting for a local user’s connection termination request
+    #+REVEAL_HTML: </div>
 
     #+REVEAL: split
+
+    #+REVEAL_HTML: <div style="font-size: 50%;">
+    - *CLOSE-WAIT* (both server and client)
+      - Represents waiting for a local user’s connection termination request
 
     - *CLOSING* (both server and client)
       - Represents waiting for a connection termination request acknowledgment from the remote TCP
@@ -148,13 +141,12 @@
     - *LAST-ACK* (both server and client)
       - Represents waiting for an acknowledgment of the connection termination request previously sent to the remote host
 
-    #+REVEAL: split
-
     - *TIME-WAIT* (either server or client)
       - Represents waiting for enough time to pass to ensure the remote host received the acknowledgment of its connection termination request
 
     - *CLOSED* (both server and client)
       - Represents no connection state at all
+    #+REVEAL_HTML: </div>
 
 ** TLS Handshake
 ** 
@@ -163,22 +155,18 @@
    :reveal_background_size: 800px
    :END:
 
-** 
+** TLS Handshake
+   #+REVEAL_HTML: <div style="font-size: 50%;">
    - 1. *ClientHello*: This contains the cipher suites supported by the client and a random number.
    - 2. *ServerHello*: This message contains the cipher it supports and a random number.
    - 3. *ServerCertificate*: This contains the server’s certificate and its server public key.
-
-   #+REVEAL: split
-
    - 4. *ServerHelloDone*: This is the end of the ServerHello. If the client receives a request for its certificate, it sends a ClientCertificate message.
    - 5. *ClientKeyExchange*: Based on the server’s random number, our client generates a random premaster secret, encrypts it with the server’s public key certificate, and sends it to the server.
    - 6. *Key Generation*: The client and server generate a master secret from the premaster secret and exchange random values.
-
-   #+REVEAL: split
-
    - 7. *ChangeCipherSpec*: Now the client and server swap their ChangeCipherSpec to begin using the new keys for encryption.
    - 8. *Finished Client*: The client sends the finished message to confirm that the key exchange and authentication were successful.
    - 9. *Finished Server*: Now, the server sends the finished message to the client to end the handshake.
+   #+REVEAL_HTML: </div>
 
 ** 
    :PROPERTIES:
@@ -201,15 +189,77 @@
    :END:
 
 ** VXLAN Header
-** 
+*** 
    :PROPERTIES:
    :reveal_background: ./images/vxlan-header.png
    :reveal_background_size: 1000px
    :END:
 
 ** VXLAN Header in wireshark
-** 
+*** 
    :PROPERTIES:
    :reveal_background: ./images/vxlan-header-wireshark.png
    :reveal_background_trans: slide
    :END:
+
+
+* Linux Networking
+** Bridge and Veth
+** What is *bridge* and *veth* ?
+   #+REVEAL_HTML: <div style="font-size: 50%;">
+   - *Bridge*
+     - the bridge functions like a network switch between network interfaces on a host, seamlessly connecting them.
+   #+begin_src bash
+     # # Add a new bridge interface named br0.
+     # ip link add br0 type bridge
+     # # Attach eth0 to our bridge.
+     # ip link set eth0 master br0
+     # # Attach veth to our bridge.
+     # ip link set veth master br0
+   #+end_src
+
+   - *Veth*
+     - The veth device is a local Ethernet tunnel. Veth devices are created in pairs. Packets transmitted on one device in the pair are immediately received on the other device. When either device is down, the link state of the pair is down. Adding a bridge to Linux can be done with using the ~brctl~ commands or ~ip~.
+   #+begin_src bash
+     # ip netns add net1
+     # ip netns add net2
+     # ip link add veth1 netns net1 type veth peer name veth2 netns net2
+   #+end_src
+   
+   - 参考 [[https://developers.redhat.com/blog/2018/10/22/introduction-to-linux-interfaces-for-virtual-networking][Introduction to Linux interfaces for virtual networking]]
+   #+REVEAL_HTML: </div>
+
+** 
+   :PROPERTIES:
+   :reveal_background: ./images/linux-bridge-interface.png
+   :reveal_background_size: 400px
+   :END:
+
+** Netfilter
+
+   #+REVEAL_HTML: <div style="font-size: 60%;">
+   - The *netfilter project* is a community-driven collaborative FOSS project that provides packet filtering software for the Linux 2.4.x and later kernel series. The netfilter project is commonly associated with iptables and its successor nftables.
+   - The *netfilter* project enables packet filtering, network address [and port] translation (NA[P]T), packet logging, userspace packet queueing and other packet mangling.
+   - The *netfilter hooks* are a framework inside the Linux kernel that allows kernel modules to register callback functions at different locations of the Linux network stack. The registered callback function is then called back for every packet that traverses the respective hook within the Linux network stack.
+   - *iptables* is a generic firewalling software that allows you to define rulesets. Each rule within an IP table consists of a number of classifiers (iptables matches) and one connected action (iptables target).
+   - *nftables* is the successor of iptables, it allows for much more flexible, scalable and performance packet classification. This is where all the fancy new features are developed.
+   #+REVEAL_HTML: </div>
+
+** 
+   :PROPERTIES:
+   :reveal_background: ./images/netfilter-packet-flow.svg
+   :reveal_background_size: 1400px
+   :END:
+
+** Netfilter hooks
+   #+REVEAL_HTML: <div style="font-size: 50%;">
+   | Netfilter hook       | Iptables chain name | Description                                                                                   |
+   |----------------------+---------------------+-----------------------------------------------------------------------------------------------|
+   | <20>                 | <13>                |                                                                                               |
+   | ~NF_IP_PRE_ROUTING~  | PREROUTING          | Triggers when a packet arrives from an external system.                                       |
+   | ~NF_IP_LOCAL_IN~     | INPUT               | Triggers when a packet’s destination IP address matches this machine.                         |
+   | ~NF_IP_FORWARD~      | NAT                 | Triggers for packets where neither source nor destination matches the machine’s IP addresses. |
+   | ~NF_IP_LOCAL_OUT~    | OUTPUT              | Triggers when a packet, originating from the machine, is leaving the machine.                 |
+   | ~NF_IP_POST_ROUTING~ | POSTROUTING         | Triggers when any packet (regardless of origin) is leaving the machine.                       |
+   #+REVEAL_HTML: </div>
+
