@@ -27,13 +27,13 @@
 <div class="reveal">
 <div class="slides">
 <section id="sec-title-slide">
-<h1 class="title">Kubernetes Networking</h1><h2 class="author">kangxiaoning</h2><p class="date">Created: 2021-12-02 Thu 19:58</p>
+<h1 class="title">Kubernetes Networking</h1><h2 class="author">kangxiaoning</h2><p class="date">Created: 2021-12-02 Thu 20:30</p>
 </section>
 
 
 <section>
-<section id="slide-orgaae4d75">
-<h2 id="orgaae4d75">Objectives</h2>
+<section id="slide-org3a9a59c">
+<h2 id="org3a9a59c">Objectives</h2>
 <ul>
 <li class="fragment appear">Understand networking and Linux primitives that power Kubernetes</li>
 <li class="fragment appear">Understand the Container Network Interface (CNI) project</li>
@@ -45,8 +45,8 @@
 </section>
 </section>
 <section>
-<section id="slide-orgcf00c46">
-<h2 id="orgcf00c46">Agenda</h2>
+<section id="slide-orgbe70478">
+<h2 id="orgbe70478">Agenda</h2>
 <ul>
 <li>TCP/IP and OSI</li>
 <li>Linux Networking</li>
@@ -57,26 +57,26 @@
 </section>
 </section>
 <section>
-<section id="slide-orge699d22">
-<h2 id="orge699d22">TCP/IP and OSI</h2>
-<div class="outline-text-2" id="text-orge699d22">
+<section id="slide-org91c7d3c">
+<h2 id="org91c7d3c">TCP/IP and OSI</h2>
+<div class="outline-text-2" id="text-org91c7d3c">
 </div>
 </section>
-<section id="slide-orgacffc91" data-background="./images/tcpip-and-osi.png" data-background-size="500px">
-<h3 id="orgacffc91"></h3>
+<section id="slide-orgde29e4d" data-background="./images/tcpip-and-osi.png" data-background-size="500px">
+<h3 id="orgde29e4d"></h3>
 
 </section>
-<section id="slide-org4c568a9">
-<h3 id="org4c568a9">IP Header</h3>
-<div class="outline-text-3" id="text-org4c568a9">
+<section id="slide-org1cbf495">
+<h3 id="org1cbf495">IP Header</h3>
+<div class="outline-text-3" id="text-org1cbf495">
 </div>
 </section>
-<section id="slide-orgee15df7" data-background="./images/ipv4-header.svg" data-background-size="1000px">
-<h4 id="orgee15df7"></h4>
+<section id="slide-org45c85dd" data-background="./images/ipv4-header.svg" data-background-size="1000px">
+<h4 id="org45c85dd"></h4>
 
 </section>
-<section id="slide-org86c8580">
-<h4 id="org86c8580">IP Header fields</h4>
+<section id="slide-org560a908">
+<h4 id="org560a908">IP Header fields</h4>
 <div style="font-size: 50%;">
 <ul>
 <li><b>Internet Header Length (IHL)</b>
@@ -107,24 +107,24 @@
 </div>
 
 </section>
-<section id="slide-org2eda5fc">
-<h4 id="org2eda5fc">IP Header in wireshark</h4>
+<section id="slide-org812c00d">
+<h4 id="org812c00d">IP Header in wireshark</h4>
 </section>
-<section id="slide-org28e2fbb" data-background="./images/ipv4-header-wireshark.png" data-background-size="1400px">
-<h4 id="org28e2fbb"></h4>
+<section id="slide-orgded3ca8" data-background="./images/ipv4-header-wireshark.png" data-background-size="1400px">
+<h4 id="orgded3ca8"></h4>
 
 </section>
-<section id="slide-org7356776">
-<h3 id="org7356776">TCP Header</h3>
-<div class="outline-text-3" id="text-org7356776">
+<section id="slide-orgcb412fe">
+<h3 id="orgcb412fe">TCP Header</h3>
+<div class="outline-text-3" id="text-orgcb412fe">
 </div>
 </section>
-<section id="slide-orgfdb205a" data-background="./images/tcp-header.svg" data-background-size="1000px">
-<h4 id="orgfdb205a"></h4>
+<section id="slide-orgaef4f6b" data-background="./images/tcp-header.svg" data-background-size="1000px">
+<h4 id="orgaef4f6b"></h4>
 
 </section>
-<section id="slide-orga5c394e">
-<h4 id="orga5c394e">TCP Header fields</h4>
+<section id="slide-orgc0cdf72">
+<h4 id="orgc0cdf72">TCP Header fields</h4>
 <div style="font-size: 50%;">
 <ul>
 <li><b>Sequence number (32 bits)</b>
@@ -137,28 +137,6 @@
 <li>If the ACK flag is set, then this field’s value is the next sequence number of the ACK the sender is expecting. This acknowledges receipt of all preceding bytes (if any). Each end’s first ACK acknowledges the other end’s initial sequence number itself, but no data has been sent.</li>
 
 </ul></li>
-<li><b>Flags (9 bits)</b>
-<ul>
-<li><b>NS–ECN-nonce</b>: Concealment protection.</li>
-<li><b>CWR</b>: Congestion Window Reduced; the sender reduced its sending rate.</li>
-<li><b>ECE</b>: ECN Echo; the sender received an earlier congestion notification.</li>
-<li><b>URG</b>: Urgent; the Urgent Pointer field is valid, but this is rarely used.</li>
-<li><b>ACK</b>: Acknowledgment; the Acknowledgment Number field is valid and is always on after a connection is established.</li>
-
-</ul></li>
-
-</ul>
-</div>
-
-</section>
-<section>
-
-<div style="font-size: 50%;">
-<ul>
-<li><b>PSH</b>: Push; the receiver should pass this data to the application as soon as possible.</li>
-<li><b>RST</b>: Reset the connection or connection abort, usually because of an error.</li>
-<li><b>SYN</b>: Synchronize sequence numbers to initiate a connection.</li>
-<li><b>FIN</b>: The sender of the segment is finished sending data to its peer.</li>
 <li><b>Window size (16 bits)</b>
 <ul>
 <li>This is the size of the receive window.</li>
@@ -179,22 +157,44 @@
 </div>
 
 </section>
-<section id="slide-org54c861f">
-<h4 id="org54c861f">TCP Header in wireshark</h4>
-</section>
-<section id="slide-orgc6f1472" data-background="./images/tcp-header-wireshark.png" data-background-transition="slide">
-<h4 id="orgc6f1472"></h4>
+<section>
+
+<div style="font-size: 50%;">
+<ul>
+<li><b>Flags (9 bits)</b>
+<ul>
+<li><b>NS–ECN-nonce</b>: Concealment protection.</li>
+<li><b>CWR</b>: Congestion Window Reduced; the sender reduced its sending rate.</li>
+<li><b>ECE</b>: ECN Echo; the sender received an earlier congestion notification.</li>
+<li><b>URG</b>: Urgent; the Urgent Pointer field is valid, but this is rarely used.</li>
+<li><b>ACK</b>: Acknowledgment; the Acknowledgment Number field is valid and is always on after a connection is established.</li>
+<li><b>PSH</b>: Push; the receiver should pass this data to the application as soon as possible.</li>
+<li><b>RST</b>: Reset the connection or connection abort, usually because of an error.</li>
+<li><b>SYN</b>: Synchronize sequence numbers to initiate a connection.</li>
+<li><b>FIN</b>: The sender of the segment is finished sending data to its peer.</li>
+
+</ul></li>
+
+</ul>
+</div>
 
 </section>
-<section id="slide-org1994caf">
-<h4 id="org1994caf">TCP State</h4>
+<section id="slide-orgb490daa">
+<h4 id="orgb490daa">TCP Header in wireshark</h4>
 </section>
-<section id="slide-org02bfb36" data-background="./images/tcp-state.svg" data-background-size="1000px">
-<h4 id="org02bfb36"></h4>
+<section id="slide-org269b76c" data-background="./images/tcp-header-wireshark.png" data-background-transition="slide">
+<h4 id="org269b76c"></h4>
 
 </section>
-<section id="slide-orgba8e972">
-<h4 id="orgba8e972">TCP State</h4>
+<section id="slide-orga129750">
+<h4 id="orga129750">TCP State</h4>
+</section>
+<section id="slide-orgf5fbf55" data-background="./images/tcp-state.svg" data-background-size="1000px">
+<h4 id="orgf5fbf55"></h4>
+
+</section>
+<section id="slide-orgc7c2d6a">
+<h4 id="orgc7c2d6a">TCP State</h4>
 <div style="font-size: 50%;">
 <ul>
 <li><b>LISTEN</b> (server)
@@ -275,15 +275,15 @@
 </div>
 
 </section>
-<section id="slide-org147dfec">
-<h3 id="org147dfec">TLS Handshake</h3>
+<section id="slide-org26fc2f6">
+<h3 id="org26fc2f6">TLS Handshake</h3>
 </section>
-<section id="slide-orgee15c7a" data-background="./images/tls-handshake.png" data-background-size="800px">
-<h3 id="orgee15c7a"></h3>
+<section id="slide-orgdce3000" data-background="./images/tls-handshake.png" data-background-size="800px">
+<h3 id="orgdce3000"></h3>
 
 </section>
-<section id="slide-orgc09d442">
-<h3 id="orgc09d442">TLS Handshake</h3>
+<section id="slide-org7d43315">
+<h3 id="org7d43315">TLS Handshake</h3>
 <div style="font-size: 50%;">
 <ul>
 <li>1. <b>ClientHello</b>: This contains the cipher suites supported by the client and a random number.</li>
@@ -300,53 +300,53 @@
 </div>
 
 </section>
-<section id="slide-org87e3868" data-background="./images/tls-01.png">
-<h3 id="org87e3868"></h3>
+<section id="slide-org938551f" data-background="./images/tls-01.png">
+<h3 id="org938551f"></h3>
 
 </section>
-<section id="slide-org66130ba" data-background="./images/tls-02.png">
-<h3 id="org66130ba"></h3>
+<section id="slide-org4f01629" data-background="./images/tls-02.png">
+<h3 id="org4f01629"></h3>
 
 </section>
-<section id="slide-orgc590642" data-background="./images/tls-03.png">
-<h3 id="orgc590642"></h3>
+<section id="slide-org59117b2" data-background="./images/tls-03.png">
+<h3 id="org59117b2"></h3>
 
 </section>
-<section id="slide-org565b915" data-background="./images/tls-04.png">
-<h3 id="org565b915"></h3>
+<section id="slide-orgcd035c7" data-background="./images/tls-04.png">
+<h3 id="orgcd035c7"></h3>
 
 </section>
-<section id="slide-orga91ff5b">
-<h3 id="orga91ff5b">VXLAN Header</h3>
-<div class="outline-text-3" id="text-orga91ff5b">
+<section id="slide-org6cc3061">
+<h3 id="org6cc3061">VXLAN Header</h3>
+<div class="outline-text-3" id="text-org6cc3061">
 </div>
 </section>
-<section id="slide-org4c619d5" data-background="./images/vxlan-header.png" data-background-size="1000px">
-<h4 id="org4c619d5"></h4>
+<section id="slide-org3dca971" data-background="./images/vxlan-header.png" data-background-size="1000px">
+<h4 id="org3dca971"></h4>
 
 </section>
-<section id="slide-org21e0d0d">
-<h3 id="org21e0d0d">VXLAN Header in wireshark</h3>
-<div class="outline-text-3" id="text-org21e0d0d">
+<section id="slide-orgb48d7e6">
+<h3 id="orgb48d7e6">VXLAN Header in wireshark</h3>
+<div class="outline-text-3" id="text-orgb48d7e6">
 </div>
 </section>
-<section id="slide-orgc0a42f7" data-background="./images/vxlan-header-wireshark.png" data-background-transition="slide">
-<h4 id="orgc0a42f7"></h4>
+<section id="slide-org6206fa4" data-background="./images/vxlan-header-wireshark.png" data-background-transition="slide">
+<h4 id="org6206fa4"></h4>
 
 
 </section>
 </section>
 <section>
-<section id="slide-orgc7061b1">
-<h2 id="orgc7061b1">Linux Networking</h2>
-<div class="outline-text-2" id="text-orgc7061b1">
+<section id="slide-org2208e4c">
+<h2 id="org2208e4c">Linux Networking</h2>
+<div class="outline-text-2" id="text-org2208e4c">
 </div>
 </section>
-<section id="slide-org28843d5">
-<h3 id="org28843d5">Bridge and Veth</h3>
+<section id="slide-orgecc76f3">
+<h3 id="orgecc76f3">Bridge and Veth</h3>
 </section>
-<section id="slide-orgda5799a">
-<h3 id="orgda5799a">What is <b>bridge</b> and <b>veth</b> ?</h3>
+<section id="slide-org765d740">
+<h3 id="org765d740">What is <b>bridge</b> and <b>veth</b> ?</h3>
 <div style="font-size: 50%;">
 <ul>
 <li><b>Bridge</b>
@@ -390,12 +390,12 @@
 </div>
 
 </section>
-<section id="slide-orgebe1a6d" data-background="./images/linux-bridge-interface.png" data-background-size="400px">
-<h3 id="orgebe1a6d"></h3>
+<section id="slide-org4805db9" data-background="./images/linux-bridge-interface.png" data-background-size="400px">
+<h3 id="org4805db9"></h3>
 
 </section>
-<section id="slide-org61e633a">
-<h3 id="org61e633a">Netfilter</h3>
+<section id="slide-orgf3f71d6">
+<h3 id="orgf3f71d6">Netfilter</h3>
 <div style="font-size: 60%;">
 <ul>
 <li>The <b>netfilter project</b> is a community-driven collaborative FOSS project that provides packet filtering software for the Linux 2.4.x and later kernel series. The netfilter project is commonly associated with iptables and its successor nftables.</li>
@@ -408,12 +408,12 @@
 </div>
 
 </section>
-<section id="slide-org2bf9164" data-background="./images/netfilter-packet-flow.svg" data-background-size="1400px">
-<h3 id="org2bf9164"></h3>
+<section id="slide-orgdb0a5b6" data-background="./images/netfilter-packet-flow.svg" data-background-size="1400px">
+<h3 id="orgdb0a5b6"></h3>
 
 </section>
-<section id="slide-orgb7210c3">
-<h3 id="orgb7210c3">Netfilter hooks</h3>
+<section id="slide-orga7e3cc3">
+<h3 id="orga7e3cc3">Netfilter hooks</h3>
 <div style="font-size: 50%;">
 <table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 
@@ -465,6 +465,91 @@
 </tbody>
 </table>
 </div>
+
+</section>
+<section id="slide-org9bd9ea2">
+<h3 id="org9bd9ea2">data structure</h3>
+<div style="font-size: 60%;">
+<div class="org-src-container">
+
+<pre><code class="c" >struct xt_table
+{
+    //All the tables are registered in the xt linked list of the network namespace;
+  struct list_head list;
+
+  //Name of table, such as "filter", "nat","mangle"
+  const char name[XT_TABLE_MAXNAMELEN];
+
+  //It is used by bit to indicate which HOOK point rules and 5 hooks are saved in the table
+  unsigned int valid_hooks;
+
+  //This lock protects the contents of the private pointer in the table
+  rwlock_t lock;
+
+  //It actually points to struct xt_table_info object, as defined below
+  void *private;
+
+  /* Set this to THIS_MODULE if you are a module, otherwise NULL */
+  struct module *me;
+
+  //Which protocol family does the table belong to
+  int af;		/* address/protocol family */
+};
+
+struct net {
+...
+#ifdef CONFIG_NETFILTER
+  struct netns_xt		xt;
+#endif
+};
+struct netns_xt {
+  struct list_head tables[NPROTO];
+};
+</code></pre>
+</div>
+</div>
+
+</section>
+<section>
+
+<div style="font-size: 60%;">
+<div class="org-src-container">
+
+<pre><code class="c" >struct xt_table_info
+{
+  //Memory size of all rules in table
+  unsigned int size;
+  //Number of rules currently saved in table
+  unsigned int number;
+  //The number of rules in the table at initial registration
+  /* Initial number of entries. Needed for module usage count */
+  unsigned int initial_entries;
+  //Each table can save rules of multiple HOOK points (by the table's valid_hook),
+  //After entering from a HOOK point, only the rules on the HOOK point should be checked when checking rules
+  //In order to delimit the rules in the table according to the HOOK point, there are two members as follows:
+  //hook_entry [] records the offset of the first rule of each HOOK point from entries;
+  //Under flow [] records the offset of the last rule of each HOOK point from the entries
+  unsigned int hook_entry[NF_INET_NUMHOOKS];
+  unsigned int underflow[NF_INET_NUMHOOKS];
+  //The rule in table is that each CPU has a copy. This is to avoid mutual exclusion between multiple CPUs,
+  //Therefore, the entries are allocated according to the number of CPUs. For example, if there are two CPUs, two char pointers will be allocated
+  //The CPU ID is used to index
+    char *entries[1];
+};
+//The following auxiliary macro is used to calculate struct XT_ table_ The memory size of the info object,
+//Note that the entries have been sized according to the number of CPU s
+#define XT_TABLE_INFO_SZ (offsetof(struct xt_table_info, entries) \
+                          + nr_cpu_ids * sizeof(char *))
+</code></pre>
+</div>
+</div>
+
+</section>
+<section id="slide-org4186064">
+<h3 id="org4186064">netfilter table chain</h3>
+</section>
+<section id="slide-org4944dec" data-background="./images/netfilter-table-chain.jpeg" data-background-size="1200px">
+<h3 id="org4944dec"></h3>
 </section>
 </section>
 </div>
