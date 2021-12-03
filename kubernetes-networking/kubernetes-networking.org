@@ -204,40 +204,53 @@
 
 
 * Linux Networking
-** Bridge and Veth
-** What is *bridge* and *veth* ?
-   #+REVEAL_HTML: <div style="font-size: 50%;">
-   - *Bridge*
-     - the bridge functions like a network switch between network interfaces on a host, seamlessly connecting them.
-   #+begin_src bash
-     # # Add a new bridge interface named br0.
-     # ip link add br0 type bridge
-     # # Attach eth0 to our bridge.
-     # ip link set eth0 master br0
-     # # Attach veth to our bridge.
-     # ip link set veth master br0
-   #+end_src
+** Linux network devices
+*** bridge and veth
+    #+REVEAL_HTML: <div style="font-size: 50%;">
+    - *Bridge*
+      - the bridge functions like a network switch between network interfaces on a host, seamlessly connecting them.
+    #+begin_src bash
+      # # Add a new bridge interface named br0.
+      # ip link add br0 type bridge
+      # # Attach eth0 to our bridge.
+      # ip link set eth0 master br0
+      # # Attach veth to our bridge.
+      # ip link set veth master br0
+    #+end_src
 
-   - *Veth*
-     - The veth device is a local Ethernet tunnel. Veth devices are created in pairs. Packets transmitted on one device in the pair are immediately received on the other device. When either device is down, the link state of the pair is down. Adding a bridge to Linux can be done with using the ~brctl~ commands or ~ip~.
-   #+begin_src bash
-     # ip netns add net1
-     # ip netns add net2
-     # ip link add veth1 netns net1 type veth peer name veth2 netns net2
-   #+end_src
-   
-   - 参考 [[https://developers.redhat.com/blog/2018/10/22/introduction-to-linux-interfaces-for-virtual-networking][Introduction to Linux interfaces for virtual networking]]
-   #+REVEAL_HTML: </div>
+    - *Veth*
+      - The veth device is a local Ethernet tunnel. Veth devices are created in pairs. Packets transmitted on one device in the pair are immediately received on the other device. When either device is down, the link state of the pair is down. Adding a bridge to Linux can be done with using the ~brctl~ commands or ~ip~.
+    #+begin_src bash
+      # ip netns add net1
+      # ip netns add net2
+      # ip link add veth1 netns net1 type veth peer name veth2 netns net2
+    #+end_src
+    #+REVEAL_HTML: </div>
+*** 
+    :PROPERTIES:
+    :reveal_background: ./images/linux-bridge-interface.png
+    :reveal_background_size: 500px
+    :END:
 
-** 
+*** tun and tap
+
+    #+REVEAL_HTML: <div style="font-size: 50%;">
+    - *TUN*
+      - tunnel devices operate at *layer 3*, meaning the data (packets) you will receive from the file descriptor will be IP based. Data written back to the device must also be in the form of an IP packet.
+    - *TAP*
+      - network tap operates much like TUN however instead of only being able to write and receive layer 3 packets to/from the file descriptor it can use *raw ethernet* packets. You will typically see TAP devices used by KVM/Qemu virtualization, where a TAP device is assigned to a virtual guest interface during creation.
+    #+REVEAL_HTML: </div>
+
+*** 
    :PROPERTIES:
-   :reveal_background: ./images/linux-bridge-interface.png
-   :reveal_background_size: 400px
+   :reveal_background: ./images/linux-network-device.png
+   :reveal_background_size: 1200px
    :END:
+
 
 ** Netfilter
 
-   #+REVEAL_HTML: <div style="font-size: 60%;">
+   #+REVEAL_HTML: <div style="font-size: 50%;">
    - The *netfilter project* is a community-driven collaborative FOSS project that provides packet filtering software for the Linux 2.4.x and later kernel series. The netfilter project is commonly associated with iptables and its successor nftables.
    - The *netfilter* project enables packet filtering, network address [and port] translation (NA[P]T), packet logging, userspace packet queueing and other packet mangling.
    - The *netfilter hooks* are a framework inside the Linux kernel that allows kernel modules to register callback functions at different locations of the Linux network stack. The registered callback function is then called back for every packet that traverses the respective hook within the Linux network stack.
@@ -245,101 +258,182 @@
    - *nftables* is the successor of iptables, it allows for much more flexible, scalable and performance packet classification. This is where all the fancy new features are developed.
    #+REVEAL_HTML: </div>
 
-** 
+*** 
    :PROPERTIES:
    :reveal_background: ./images/netfilter-packet-flow.svg
    :reveal_background_size: 1400px
    :END:
 
-** Netfilter hooks
+*** Netfilter hooks
+    #+REVEAL_HTML: <div style="font-size: 50%;">
+    | Netfilter hook       | Iptables chain name | Description                                                                                   |
+    |----------------------+---------------------+-----------------------------------------------------------------------------------------------|
+    | <20>                 | <13>                |                                                                                               |
+    | ~NF_IP_PRE_ROUTING~  | PREROUTING          | Triggers when a packet arrives from an external system.                                       |
+    | ~NF_IP_LOCAL_IN~     | INPUT               | Triggers when a packet’s destination IP address matches this machine.                         |
+    | ~NF_IP_FORWARD~      | NAT                 | Triggers for packets where neither source nor destination matches the machine’s IP addresses. |
+    | ~NF_IP_LOCAL_OUT~    | OUTPUT              | Triggers when a packet, originating from the machine, is leaving the machine.                 |
+    | ~NF_IP_POST_ROUTING~ | POSTROUTING         | Triggers when any packet (regardless of origin) is leaving the machine.                       |
+    #+REVEAL_HTML: </div>
+
+*** data structure
+
+    #+REVEAL_HTML: <div style="font-size: 60%;">
+    #+begin_src c
+      struct xt_table
+      {
+        //All the tables are registered in the xt linked list of the network namespace;
+        struct list_head list;
+      
+        //Name of table, such as "filter", "nat","mangle"
+        const char name[XT_TABLE_MAXNAMELEN];
+      
+        //It is used by bit to indicate which HOOK point rules and 5 hooks are saved in the table
+        unsigned int valid_hooks;
+      
+        //This lock protects the contents of the private pointer in the table
+        rwlock_t lock;
+      
+        //It actually points to struct xt_table_info object, as defined below
+        void *private;
+      
+        /* Set this to THIS_MODULE if you are a module, otherwise NULL */
+        struct module *me;
+      
+        //Which protocol family does the table belong to
+        int af;		/* address/protocol family */
+      };
+      
+      struct net {
+        ...
+      #ifdef CONFIG_NETFILTER
+        struct netns_xt		xt;
+      #endif
+      };
+      struct netns_xt {
+        struct list_head tables[NPROTO];
+      };
+    #+end_src
+    #+REVEAL_HTML: </div>
+
+    #+REVEAL: split
+
+    #+REVEAL_HTML: <div style="font-size: 60%;">
+    #+begin_src c
+      struct xt_table_info
+      {
+        //Memory size of all rules in table
+        unsigned int size;
+        //Number of rules currently saved in table
+        unsigned int number;
+        //The number of rules in the table at initial registration
+        /* Initial number of entries. Needed for module usage count */
+        unsigned int initial_entries;
+        //Each table can save rules of multiple HOOK points (by the table's valid_hook),
+        //After entering from a HOOK point, only the rules on the HOOK point should be checked when checking rules
+        //In order to delimit the rules in the table according to the HOOK point, there are two members as follows:
+        //hook_entry [] records the offset of the first rule of each HOOK point from entries;
+        //Under flow [] records the offset of the last rule of each HOOK point from the entries
+        unsigned int hook_entry[NF_INET_NUMHOOKS];
+        unsigned int underflow[NF_INET_NUMHOOKS];
+        //The rule in table is that each CPU has a copy. This is to avoid mutual exclusion between multiple CPUs,
+        //Therefore, the entries are allocated according to the number of CPUs. For example, if there are two CPUs, two char pointers will be allocated
+        //The CPU ID is used to index
+        char *entries[1];
+      };
+      //The following auxiliary macro is used to calculate struct XT_ table_ The memory size of the info object,
+      //Note that the entries have been sized according to the number of CPU s
+      #define XT_TABLE_INFO_SZ (offsetof(struct xt_table_info, entries) \
+                                + nr_cpu_ids * sizeof(char *))
+    #+end_src
+    #+REVEAL_HTML: </div>
+
+*** netfilter table chain
+*** 
+    :PROPERTIES:
+    :reveal_background: ./images/netfilter-table-chain.jpeg
+    :reveal_background_size: 1200px
+    :END:
+
+** ipvs
+   - *DR* encapsulates IP datagrams within IP datagrams.
+   - *NAT* rewrites source and destination addresses.
+   - *IP* tunneling directly routes packets to the backend server by rewriting the MAC address of the data frame with the MAC address of the selected backend server.
+
+*** 
+    :PROPERTIES:
+    :reveal_background: ./images/ipvs-dr-mode.svg
+    :reveal_background_size: 1000px
+    :END:
+
+*** 
+    :PROPERTIES:
+    :reveal_background: ./images/ipvs-nat-mode.svg
+    :reveal_background_size: 600px
+    :END:
+
+*** 
+    :PROPERTIES:
+    :reveal_background: ./images/ipvs-tun-mode.svg
+    :reveal_background_size: 1200px
+    :END:
+
+*** iptables issues
+
+    #+REVEAL_HTML: <div style="font-size: 50%;">
+    There are three aspects to look at when it comes to issues with iptables as a load balancer:
+
+    - Number of nodes in the cluster
+      - Even though Kubernetes already supports 5,000 nodes in release v1.6, kube-proxy with iptables is a bottleneck to scale the cluster to 5,000 nodes. One example is that with a NodePort service in a 5,000-node cluster, if we have 2,000 services and each service has 10 pods, this will cause at least 20,000 iptables records on each worker node, which can make the kernel pretty busy.
+
+    - Time
+      - The time spent to add one rule when there are 5,000 services (40,000 rules) is 11 minutes. For 20,000 services (160,000 rules), it’s 5 hours.
+
+    - Latency
+      - There is latency to access a service (routing latency); each packet must traverse the iptables list until a match is made. There is latency to add/remove rules, inserting and removing from an extensive list is an intensive operation at scale.
+
+    #+REVEAL_HTML: </div>
+*** 
+    :PROPERTIES:
+    :reveal_background: ./images/kubernetes-ipvs.png
+    :reveal_background_size: 800px
+    :END:
+
+** eBPF
+
    #+REVEAL_HTML: <div style="font-size: 50%;">
-   | Netfilter hook       | Iptables chain name | Description                                                                                   |
-   |----------------------+---------------------+-----------------------------------------------------------------------------------------------|
-   | <20>                 | <13>                |                                                                                               |
-   | ~NF_IP_PRE_ROUTING~  | PREROUTING          | Triggers when a packet arrives from an external system.                                       |
-   | ~NF_IP_LOCAL_IN~     | INPUT               | Triggers when a packet’s destination IP address matches this machine.                         |
-   | ~NF_IP_FORWARD~      | NAT                 | Triggers for packets where neither source nor destination matches the machine’s IP addresses. |
-   | ~NF_IP_LOCAL_OUT~    | OUTPUT              | Triggers when a packet, originating from the machine, is leaving the machine.                 |
-   | ~NF_IP_POST_ROUTING~ | POSTROUTING         | Triggers when any packet (regardless of origin) is leaving the machine.                       |
+   *eBPF* is a programming system that allows special sandboxed programs to run in the kernel without passing back and forth between kernel and user space, like we saw with Netfilter and iptables.
+
+   In addition to socket filtering, other supported attach points in the kernel are as follows:
+
+   - Kprobes
+     - Dynamic kernel tracing of internal kernel components.
+
+   - Uprobes
+     - User-space tracing.
+
+   - Tracepoints
+     - Kernel static tracing. These are programed into the kernel by developers and are more stable as compared to kprobes, which may change between kernel versions.
+
+   - perf_events
+     - Timed sampling of data and events.
+
+   - XDP
+     - Specialized eBPF programs that can go lower than kernel space to access driver space to act directly on packets.
+
    #+REVEAL_HTML: </div>
 
-** data structure
+*** 
+    :PROPERTIES:
+    :reveal_background: ./images/ebpf-example.png
+    :reveal_background_size: 600px
+    :END:
 
-   #+REVEAL_HTML: <div style="font-size: 60%;">
-   #+begin_src c
-     struct xt_table
-     {
-         //All the tables are registered in the xt linked list of the network namespace;
-       struct list_head list;
-     
-       //Name of table, such as "filter", "nat","mangle"
-       const char name[XT_TABLE_MAXNAMELEN];
-     
-       //It is used by bit to indicate which HOOK point rules and 5 hooks are saved in the table
-       unsigned int valid_hooks;
-     
-       //This lock protects the contents of the private pointer in the table
-       rwlock_t lock;
-     
-       //It actually points to struct xt_table_info object, as defined below
-       void *private;
-     
-       /* Set this to THIS_MODULE if you are a module, otherwise NULL */
-       struct module *me;
-     
-       //Which protocol family does the table belong to
-       int af;		/* address/protocol family */
-     };
-     
-     struct net {
-     ...
-     #ifdef CONFIG_NETFILTER
-       struct netns_xt		xt;
-     #endif
-     };
-     struct netns_xt {
-       struct list_head tables[NPROTO];
-     };
-   #+end_src
-   #+REVEAL_HTML: </div>
+*** 
+    :PROPERTIES:
+    :reveal_background: ./images/cilium-interacts-with-ebpf.png
+    :reveal_background_size: 1000px
+    :END:
 
-   #+REVEAL: split
-
-   #+REVEAL_HTML: <div style="font-size: 60%;">
-   #+begin_src c
-     struct xt_table_info
-     {
-       //Memory size of all rules in table
-       unsigned int size;
-       //Number of rules currently saved in table
-       unsigned int number;
-       //The number of rules in the table at initial registration
-       /* Initial number of entries. Needed for module usage count */
-       unsigned int initial_entries;
-       //Each table can save rules of multiple HOOK points (by the table's valid_hook),
-       //After entering from a HOOK point, only the rules on the HOOK point should be checked when checking rules
-       //In order to delimit the rules in the table according to the HOOK point, there are two members as follows:
-       //hook_entry [] records the offset of the first rule of each HOOK point from entries;
-       //Under flow [] records the offset of the last rule of each HOOK point from the entries
-       unsigned int hook_entry[NF_INET_NUMHOOKS];
-       unsigned int underflow[NF_INET_NUMHOOKS];
-       //The rule in table is that each CPU has a copy. This is to avoid mutual exclusion between multiple CPUs,
-       //Therefore, the entries are allocated according to the number of CPUs. For example, if there are two CPUs, two char pointers will be allocated
-       //The CPU ID is used to index
-         char *entries[1];
-     };
-     //The following auxiliary macro is used to calculate struct XT_ table_ The memory size of the info object,
-     //Note that the entries have been sized according to the number of CPU s
-     #define XT_TABLE_INFO_SZ (offsetof(struct xt_table_info, entries) \
-                               + nr_cpu_ids * sizeof(char *))
-   #+end_src
-   #+REVEAL_HTML: </div>
-
-** netfilter table chain
-** 
-   :PROPERTIES:
-   :reveal_background: ./images/netfilter-table-chain.jpeg
-   :reveal_background_size: 1200px
-   :END:
 
 * Q&A
