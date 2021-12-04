@@ -1,10 +1,12 @@
 #+Title: Kubernetes Networking
 #+Author: kangxiaoning
-#+REVEAL_ROOT: https://cdn.jsdelivr.net/npm/reveal.js@3.8.0
-#+REVEAL_VERSION: 3.8.0
+
+#+REVEAL_VERSION: 4
 #+REVEAL_THEME: white
-#+REVEAL_PLUGINS: (chalkboard highlight search)
-#+OPTIONS:  reveal_slide_number:c/t toc:nil num:nil
+#+REVEAL_PLUGINS: (highlight)
+#+REVEAL_ROOT: https://cdn.jsdelivr.net/npm/reveal.js
+#+OPTIONS: reveal_slide_number:c/t toc:nil num:nil reveal_width:1400 reveal_height:1000
+#+REVEAL_HIGHLIGHT_CSS: https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/styles/github.min.css
 
 
 * Objectives
@@ -17,9 +19,14 @@
 * Agenda
   + TCP/IP and OSI
   + Linux Networking
+  + Kubernetes networking model
 
 
 * TCP/IP and OSI
+  - IP 
+  - TCP
+  - TLS 
+  - VXLAN
 
 ** 
   :PROPERTIES:
@@ -36,7 +43,7 @@
 
 *** IP Header fields
 
-    #+REVEAL_HTML: <div style="font-size: 50%;">
+    #+REVEAL_HTML: <div style="font-size: 90%;">
     - *Internet Header Length (IHL)*
       - The IPv4 header has a variable size due to the optional 14th field option.
     - *Identification*
@@ -65,7 +72,7 @@
     :END:
 
 *** TCP Header fields
-    #+REVEAL_HTML: <div style="font-size: 50%;">
+    #+REVEAL_HTML: <div style="font-size: 90%;">
     - *Sequence number (32 bits)*
       - If the SYN flag is set, this is the initial sequence number. The sequence number of the first data byte and the acknowledged number in the corresponding ACK is this sequence number plus 1. It is also used to reassemble data if it arrives out of order.
     - *Acknowledgment number (32 bits)*
@@ -80,7 +87,7 @@
 
     #+REVEAL: split
 
-    #+REVEAL_HTML: <div style="font-size: 50%;">
+    #+REVEAL_HTML: <div style="font-size: 90%;">
     - *Flags (9 bits)*
       - *NS–ECN-nonce*: Concealment protection.
       - *CWR*: Congestion Window Reduced; the sender reduced its sending rate.
@@ -109,7 +116,7 @@
 
 *** TCP State
 
-    #+REVEAL_HTML: <div style="font-size: 50%;">
+    #+REVEAL_HTML: <div style="font-size: 90%;">
     - *LISTEN* (server)
       - Represents waiting for a connection request from any remote TCP and port
 
@@ -131,7 +138,7 @@
 
     #+REVEAL: split
 
-    #+REVEAL_HTML: <div style="font-size: 50%;">
+    #+REVEAL_HTML: <div style="font-size: 90%;">
     - *CLOSE-WAIT* (both server and client)
       - Represents waiting for a local user’s connection termination request
 
@@ -149,14 +156,14 @@
     #+REVEAL_HTML: </div>
 
 ** TLS Handshake
-** 
+*** 
    :PROPERTIES:
    :reveal_background: ./images/tls-handshake.png
    :reveal_background_size: 800px
    :END:
 
-** TLS Handshake
-   #+REVEAL_HTML: <div style="font-size: 50%;">
+*** TLS Handshake
+   #+REVEAL_HTML: <div style="font-size: 90%;">
    - 1. *ClientHello*: This contains the cipher suites supported by the client and a random number.
    - 2. *ServerHello*: This message contains the cipher it supports and a random number.
    - 3. *ServerCertificate*: This contains the server’s certificate and its server public key.
@@ -168,22 +175,22 @@
    - 9. *Finished Server*: Now, the server sends the finished message to the client to end the handshake.
    #+REVEAL_HTML: </div>
 
-** 
+*** 
    :PROPERTIES:
    :reveal_background: ./images/tls-01.png
    :END:
 
-** 
+*** 
    :PROPERTIES:
    :reveal_background: ./images/tls-02.png
    :END:
 
-** 
+*** 
    :PROPERTIES:
    :reveal_background: ./images/tls-03.png
    :END:
 
-** 
+*** 
    :PROPERTIES:
    :reveal_background: ./images/tls-04.png
    :END:
@@ -195,7 +202,7 @@
    :reveal_background_size: 1000px
    :END:
 
-** VXLAN Header in wireshark
+*** VXLAN Header in wireshark
 *** 
    :PROPERTIES:
    :reveal_background: ./images/vxlan-header-wireshark.png
@@ -204,26 +211,35 @@
 
 
 * Linux Networking
+  - Linux network devices
+  - Netfilter
+  - Ipvs
+  - eBPF
+
 ** Linux network devices
 *** bridge and veth
-    #+REVEAL_HTML: <div style="font-size: 50%;">
+    #+REVEAL_HTML: <div style="font-size: 90%;">
     - *Bridge*
       - the bridge functions like a network switch between network interfaces on a host, seamlessly connecting them.
+
+    #+ATTR_REVEAL: :code_attribs data-line-numbers
     #+begin_src bash
-      # # Add a new bridge interface named br0.
-      # ip link add br0 type bridge
-      # # Attach eth0 to our bridge.
-      # ip link set eth0 master br0
-      # # Attach veth to our bridge.
-      # ip link set veth master br0
+      # Add a new bridge interface named br0.
+      ip link add br0 type bridge
+      # Attach eth0 to our bridge.
+      ip link set eth0 master br0
+      # Attach veth to our bridge.
+      ip link set veth master br0
     #+end_src
 
     - *Veth*
       - The veth device is a local Ethernet tunnel. Veth devices are created in pairs. Packets transmitted on one device in the pair are immediately received on the other device. When either device is down, the link state of the pair is down. Adding a bridge to Linux can be done with using the ~brctl~ commands or ~ip~.
+
+    #+ATTR_REVEAL: :code_attribs data-line-numbers
     #+begin_src bash
-      # ip netns add net1
-      # ip netns add net2
-      # ip link add veth1 netns net1 type veth peer name veth2 netns net2
+      ip netns add net1
+      ip netns add net2
+      ip link add veth1 netns net1 type veth peer name veth2 netns net2
     #+end_src
     #+REVEAL_HTML: </div>
 *** 
@@ -234,7 +250,7 @@
 
 *** tun and tap
 
-    #+REVEAL_HTML: <div style="font-size: 50%;">
+    #+REVEAL_HTML: <div style="font-size: 90%;">
     - *TUN*
       - tunnel devices operate at *layer 3*, meaning the data (packets) you will receive from the file descriptor will be IP based. Data written back to the device must also be in the form of an IP packet.
     - *TAP*
@@ -247,10 +263,9 @@
    :reveal_background_size: 1200px
    :END:
 
-
 ** Netfilter
 
-   #+REVEAL_HTML: <div style="font-size: 50%;">
+   #+REVEAL_HTML: <div style="font-size: 90%;">
    - The *netfilter project* is a community-driven collaborative FOSS project that provides packet filtering software for the Linux 2.4.x and later kernel series. The netfilter project is commonly associated with iptables and its successor nftables.
    - The *netfilter* project enables packet filtering, network address [and port] translation (NA[P]T), packet logging, userspace packet queueing and other packet mangling.
    - The *netfilter hooks* are a framework inside the Linux kernel that allows kernel modules to register callback functions at different locations of the Linux network stack. The registered callback function is then called back for every packet that traverses the respective hook within the Linux network stack.
@@ -265,7 +280,7 @@
    :END:
 
 *** Netfilter hooks
-    #+REVEAL_HTML: <div style="font-size: 50%;">
+    #+REVEAL_HTML: <div style="font-size: 70%;">
     | Netfilter hook       | Iptables chain name | Description                                                                                   |
     |----------------------+---------------------+-----------------------------------------------------------------------------------------------|
     | <20>                 | <13>                |                                                                                               |
@@ -276,9 +291,17 @@
     | ~NF_IP_POST_ROUTING~ | POSTROUTING         | Triggers when any packet (regardless of origin) is leaving the machine.                       |
     #+REVEAL_HTML: </div>
 
+*** 
+   :PROPERTIES:
+   :reveal_background: ./images/iptables-table-chain.png
+   :reveal_background_size: 1000px
+   :END:
 *** data structure
 
-    #+REVEAL_HTML: <div style="font-size: 60%;">
+    #+REVEAL_HTML: <div style="font-size: 90%; text-align: left;">
+    The structure corresponds to the tables in iptables. At present, the kernel registers tables of filter, mangle, nat and raw. 
+
+    #+ATTR_REVEAL: :code_attribs data-line-numbers="1,15-16"
     #+begin_src c
       struct xt_table
       {
@@ -314,11 +337,16 @@
         struct list_head tables[NPROTO];
       };
     #+end_src
+
+    reference：https://www.fatalerrors.org/a/0tx80Dw.html
     #+REVEAL_HTML: </div>
 
     #+REVEAL: split
 
-    #+REVEAL_HTML: <div style="font-size: 60%;">
+    #+REVEAL_HTML: <div style="font-size: 90%; text-align: left;">
+    Structure ~xt_table~ is only a basic description of table and does not save the rules in table. More table contents are in its private member, and the structure pointed to by this member is struct ~xt_talble_info~ object, which is defined as follows.
+
+    #+ATTR_REVEAL: :code_attribs data-line-numbers="1,17-20"
     #+begin_src c
       struct xt_table_info
       {
@@ -355,7 +383,7 @@
     :reveal_background_size: 1200px
     :END:
 
-** ipvs
+** Ipvs
    - *DR* encapsulates IP datagrams within IP datagrams.
    - *NAT* rewrites source and destination addresses.
    - *IP* tunneling directly routes packets to the backend server by rewriting the MAC address of the data frame with the MAC address of the selected backend server.
@@ -380,7 +408,7 @@
 
 *** iptables issues
 
-    #+REVEAL_HTML: <div style="font-size: 50%;">
+    #+REVEAL_HTML: <div style="font-size: 90%; text-align: left;">
     There are three aspects to look at when it comes to issues with iptables as a load balancer:
 
     - Number of nodes in the cluster
@@ -401,24 +429,24 @@
 
 ** eBPF
 
-   #+REVEAL_HTML: <div style="font-size: 50%;">
+   #+REVEAL_HTML: <div style="font-size: 90%;">
    *eBPF* is a programming system that allows special sandboxed programs to run in the kernel without passing back and forth between kernel and user space, like we saw with Netfilter and iptables.
 
    In addition to socket filtering, other supported attach points in the kernel are as follows:
 
-   - Kprobes
+   - *Kprobes*
      - Dynamic kernel tracing of internal kernel components.
 
-   - Uprobes
+   - *Uprobes*
      - User-space tracing.
 
-   - Tracepoints
+   - *Tracepoints*
      - Kernel static tracing. These are programed into the kernel by developers and are more stable as compared to kprobes, which may change between kernel versions.
 
-   - perf_events
+   - *perf_events*
      - Timed sampling of data and events.
 
-   - XDP
+   - *XDP*
      - Specialized eBPF programs that can go lower than kernel space to access driver space to act directly on packets.
 
    #+REVEAL_HTML: </div>
@@ -436,4 +464,137 @@
     :END:
 
 
+* Kubernetes networking model
+  
+  - Pod Networking
+  - Service Routing
+
+** Pod Networking
+   - CNI(Container Networking Interface)
+   - Overlay Networking
+   - Routing
+
+*** Concepts
+    #+REVEAL_HTML: <div style="font-size: 90%; text-align: left;">
+    - *VTEP* 
+      - VXLAN Tunnel Endpoints, performs data frame encapsulation and decapsulation. The VTEP peer interaction ensures that the data gets forwarded to the relevant destination container addresses. The data leaving the containers is encapsulated with VXLAN information and transferred over the VXLAN tunnels to be de-encapsulated by the peer VTEP.
+    #+REVEAL_HTML: </div>
+
+*** CNI
+    #+REVEAL_HTML: <div style="font-size: 90%; text-align: left;">
+    Kubernetes relies on the CNI project to comply with the following requirements:
+
+    - All containers must communicate with each other without NAT.
+    - Nodes can communicate with containers without NAT.
+    - A container’s IP address is the same as those outside the container that it sees itself as.
+    #+REVEAL_HTML: </div>
+
+    #+REVEAL: split
+
+    #+REVEAL_HTML: <div style="font-size: 90%; text-align: left;">
+    - *CNI*
+      - The CNI specification defines a few key operations:
+
+      - ADD
+        - Adds a container to the network and responds with the associated interface(s), IP(s), and more.
+
+      - DELETE
+        - Removes a container from the network and releases all associated resources.
+
+      - CHECK
+        - Verifies a container’s network is set up properly and responds with an error if there are issues.
+
+      - VERSION
+        - Returns the CNI version(s) supported by the plug-in.
+    #+REVEAL_HTML: </div>
+
+*** Overlay Networking
+*** 
+   :PROPERTIES:
+   :reveal_background: ./images/vxlan-tunnel-detailed.png
+   :reveal_background_size: 800px
+   :END:
+*** 
+   :PROPERTIES:
+   :reveal_background: ./images/vxlan-encapsulation.png
+   :reveal_background_size: 800px
+   :END:
+
+*** Routing
+
+    #+REVEAL_HTML: <div style="font-size: 90%; text-align: left;">
+    *Border Gateway Protocol (BGP)* is one of the most commonly used protocols to distribute workload routes. It is used in projects such as Calico and Kube-Router. Not only does BGP enable communication of workload routes in the cluster but its internal routers can also be peered with external routers. Doing so can make external network fabrics aware of how to route to Pod IPs.
+
+    #+REVEAL_HTML: </div>
+*** 
+   :PROPERTIES:
+   :reveal_background: ./images/calico-routing.png
+   :reveal_background_size: 800px
+   :END:
+
+*** Calico
+
+    #+REVEAL_HTML: <div style="font-size: 90%; text-align: left;">
+    Calico offers a variety of ways to route packets inside of the cluster. This includes:
+
+    - Native
+      - No encapsulation of packets.
+
+    - IP-in-IP
+      - Simple encapsulation. IP packet is placed in the payload of another.
+
+    - VXLAN
+      - Advanced encapsulation. An entire L2 frame is encapsulated within a UDP packet. Establishes a virtual L2 overlay.the VXLAN mode does not require usage of BGP, which can be a solution to environments where BGP peering is blocked.
+
+    #+REVEAL_HTML: </div>
+*** 
+   :PROPERTIES:
+   :reveal_background: ./images/calico-component-relationship.png
+   :reveal_background_size: 800px
+   :END:
+
+*** 
+   :PROPERTIES:
+   :reveal_background: ./images/calico-crosssubnet-mode.png
+   :reveal_background_size: 800px
+   :END:
+
+** Service Routing
+
+   - ClusterIP
+   - NodePort
+   - LoadBalancer
+   - Ingress
+
+*** Service Implementation
+    - Kube-proxy
+      - Kube-proxy is an agent that runs on every cluster node. It is primarily responsible for making Services available to the Pods running on the local node. It achieves this by watching the API server for Services and Endpoints and programming the Linux networking stack (using iptables, for example) to handle packets accordingly.
+      - Historically, kube-proxy acted as a network proxy between Pods running on the node and Services. This is where the kube-proxy name came from. As the Kubernetes project evolved, however, kube-proxy stopped being a proxy and became more of a node agent or localized control plane.
+
+*** 
+   :PROPERTIES:
+   :reveal_background: ./images/clusterip-service.png
+   :reveal_background_size: 800px
+   :END:
+
+*** 
+   :PROPERTIES:
+   :reveal_background: ./images/nodeport-service.png
+   :reveal_background_size: 800px
+   :END:
+
+*** 
+   :PROPERTIES:
+   :reveal_background: ./images/loadbalancer-service.png
+   :reveal_background_size: 800px
+   :END:
+
+*** 
+   :PROPERTIES:
+   :reveal_background: ./images/ingress-traffic.png
+   :reveal_background_size: 800px
+   :END:
+
+
 * Q&A
+
