@@ -16,13 +16,13 @@
 <div class="reveal">
 <div class="slides">
 <section id="sec-title-slide">
-<h1 class="title">Kubernetes Networking</h1><h2 class="author">kangxiaoning</h2><p class="date">Created: 2021-12-04 Sat 16:51</p>
+<h1 class="title">Kubernetes Networking</h1><h2 class="author">kangxiaoning</h2><p class="date">Created: 2021-12-04 Sat 21:49</p>
 </section>
 
 
 <section>
-<section id="slide-org49f7b54">
-<h2 id="org49f7b54">Objectives</h2>
+<section id="slide-org226bcd2">
+<h2 id="org226bcd2">Objectives</h2>
 <ul>
 <li class="fragment appear">Understand networking and Linux primitives that power Kubernetes</li>
 <li class="fragment appear">Understand the Container Network Interface (CNI) project</li>
@@ -34,8 +34,8 @@
 </section>
 </section>
 <section>
-<section id="slide-org35af563">
-<h2 id="org35af563">Agenda</h2>
+<section id="slide-orgdd8138a">
+<h2 id="orgdd8138a">Agenda</h2>
 <ul>
 <li>TCP/IP and OSI</li>
 <li>Linux Networking</li>
@@ -47,8 +47,8 @@
 </section>
 </section>
 <section>
-<section id="slide-org0c243d7">
-<h2 id="org0c243d7">TCP/IP and OSI</h2>
+<section id="slide-org6d1e136">
+<h2 id="org6d1e136">TCP/IP and OSI</h2>
 <ul>
 <li>IP</li>
 <li>TCP</li>
@@ -58,21 +58,21 @@
 </ul>
 
 </section>
-<section id="slide-org71e2e01" data-background="./images/tcpip-and-osi.png" data-background-size="500px">
-<h3 id="org71e2e01"></h3>
+<section id="slide-orgd64d7cf" data-background="./images/tcpip-and-osi.png" data-background-size="500px">
+<h3 id="orgd64d7cf"></h3>
 
 </section>
-<section id="slide-org3417bf2">
-<h3 id="org3417bf2">IP Header</h3>
-<div class="outline-text-3" id="text-org3417bf2">
+<section id="slide-orgb944db1">
+<h3 id="orgb944db1">IP Header</h3>
+<div class="outline-text-3" id="text-orgb944db1">
 </div>
 </section>
-<section id="slide-orgdd141fa" data-background="./images/ipv4-header.svg" data-background-size="1000px">
-<h4 id="orgdd141fa"></h4>
+<section id="slide-org6ae6387" data-background="./images/ipv4-header.svg" data-background-size="1000px">
+<h4 id="org6ae6387"></h4>
 
 </section>
-<section id="slide-orge0cc6db">
-<h4 id="orge0cc6db">IP Header fields</h4>
+<section id="slide-org14bc2f6">
+<h4 id="org14bc2f6">IP Header fields</h4>
 <div style="font-size: 90%;">
 <ul>
 <li><b>Internet Header Length (IHL)</b>
@@ -103,24 +103,24 @@
 </div>
 
 </section>
-<section id="slide-orgca94155">
-<h4 id="orgca94155">IP Header in wireshark</h4>
+<section id="slide-orgfa82621">
+<h4 id="orgfa82621">IP Header in wireshark</h4>
 </section>
-<section id="slide-orgd56c30a" data-background="./images/ipv4-header-wireshark.png" data-background-size="1400px">
-<h4 id="orgd56c30a"></h4>
+<section id="slide-org9544cdd" data-background="./images/ipv4-header-wireshark.png" data-background-size="1400px">
+<h4 id="org9544cdd"></h4>
 
 </section>
-<section id="slide-org5e6de57">
-<h3 id="org5e6de57">TCP Header</h3>
-<div class="outline-text-3" id="text-org5e6de57">
+<section id="slide-org4dbd157">
+<h3 id="org4dbd157">TCP Header</h3>
+<div class="outline-text-3" id="text-org4dbd157">
 </div>
 </section>
-<section id="slide-orgb3bebd2" data-background="./images/tcp-header.svg" data-background-size="1000px">
-<h4 id="orgb3bebd2"></h4>
+<section id="slide-org9818027" data-background="./images/tcp-header.svg" data-background-size="1000px">
+<h4 id="org9818027"></h4>
 
 </section>
-<section id="slide-orgafc260c">
-<h4 id="orgafc260c">TCP Header fields</h4>
+<section id="slide-org7abee03">
+<h4 id="org7abee03">TCP Header fields</h4>
 <div style="font-size: 90%;">
 <ul>
 <li><b>Sequence number (32 bits)</b>
@@ -175,22 +175,22 @@
 </div>
 
 </section>
-<section id="slide-org56e640e">
-<h4 id="org56e640e">TCP Header in wireshark</h4>
+<section id="slide-orgf4784b9">
+<h4 id="orgf4784b9">TCP Header in wireshark</h4>
 </section>
-<section id="slide-org74b5807" data-background="./images/tcp-header-wireshark.png" data-background-transition="slide">
-<h4 id="org74b5807"></h4>
+<section id="slide-org6792e80" data-background="./images/tcp-header-wireshark.png" data-background-transition="slide">
+<h4 id="org6792e80"></h4>
 
 </section>
-<section id="slide-orgc7b5045">
-<h4 id="orgc7b5045">TCP State</h4>
+<section id="slide-org1dd78d1">
+<h4 id="org1dd78d1">TCP State</h4>
 </section>
-<section id="slide-org3295b2f" data-background="./images/tcp-state.svg" data-background-size="1000px">
-<h4 id="org3295b2f"></h4>
+<section id="slide-org3aab0e1" data-background="./images/tcp-state.svg" data-background-size="1000px">
+<h4 id="org3aab0e1"></h4>
 
 </section>
-<section id="slide-org97610e6">
-<h4 id="org97610e6">TCP State</h4>
+<section id="slide-org462997b">
+<h4 id="org462997b">TCP State</h4>
 <div style="font-size: 90%;">
 <ul>
 <li><b>LISTEN</b> (server)
@@ -271,17 +271,17 @@
 </div>
 
 </section>
-<section id="slide-org3d87d9a">
-<h3 id="org3d87d9a">TLS Handshake</h3>
-<div class="outline-text-3" id="text-org3d87d9a">
+<section id="slide-org7ca5dfd">
+<h3 id="org7ca5dfd">TLS Handshake</h3>
+<div class="outline-text-3" id="text-org7ca5dfd">
 </div>
 </section>
-<section id="slide-org8deec22" data-background="./images/tls-handshake.png" data-background-size="800px">
-<h4 id="org8deec22"></h4>
+<section id="slide-orgdbde8c1" data-background="./images/tls-handshake.png" data-background-size="800px">
+<h4 id="orgdbde8c1"></h4>
 
 </section>
-<section id="slide-orge9171ab">
-<h4 id="orge9171ab">TLS Handshake</h4>
+<section id="slide-org9a85996">
+<h4 id="org9a85996">TLS Handshake</h4>
 <div style="font-size: 90%;">
 <ul>
 <li>1. <b>ClientHello</b>: This contains the cipher suites supported by the client and a random number.</li>
@@ -298,43 +298,43 @@
 </div>
 
 </section>
-<section id="slide-orgb3edbf4" data-background="./images/tls-01.png">
-<h4 id="orgb3edbf4"></h4>
+<section id="slide-org9657747" data-background="./images/tls-01.png">
+<h4 id="org9657747"></h4>
 
 </section>
-<section id="slide-org215c8b0" data-background="./images/tls-02.png">
-<h4 id="org215c8b0"></h4>
+<section id="slide-orgc7c5524" data-background="./images/tls-02.png">
+<h4 id="orgc7c5524"></h4>
 
 </section>
-<section id="slide-org89a695b" data-background="./images/tls-03.png">
-<h4 id="org89a695b"></h4>
+<section id="slide-org55e62c8" data-background="./images/tls-03.png">
+<h4 id="org55e62c8"></h4>
 
 </section>
-<section id="slide-org636300b" data-background="./images/tls-04.png">
-<h4 id="org636300b"></h4>
+<section id="slide-org4c5a73a" data-background="./images/tls-04.png">
+<h4 id="org4c5a73a"></h4>
 
 </section>
-<section id="slide-org767177f">
-<h3 id="org767177f">VXLAN Header</h3>
-<div class="outline-text-3" id="text-org767177f">
+<section id="slide-org4b44604">
+<h3 id="org4b44604">VXLAN Header</h3>
+<div class="outline-text-3" id="text-org4b44604">
 </div>
 </section>
-<section id="slide-orga5cb350" data-background="./images/vxlan-header.png" data-background-size="1000px">
-<h4 id="orga5cb350"></h4>
+<section id="slide-org0582d91" data-background="./images/vxlan-header.png" data-background-size="1000px">
+<h4 id="org0582d91"></h4>
 
 </section>
-<section id="slide-orgc4339dc">
-<h4 id="orgc4339dc">VXLAN Header in wireshark</h4>
+<section id="slide-org3c7652c">
+<h4 id="org3c7652c">VXLAN Header in wireshark</h4>
 </section>
-<section id="slide-org2a5061e" data-background="./images/vxlan-header-wireshark.png" data-background-transition="slide">
-<h4 id="org2a5061e"></h4>
+<section id="slide-orgae773ba" data-background="./images/vxlan-header-wireshark.png" data-background-transition="slide">
+<h4 id="orgae773ba"></h4>
 
 
 </section>
 </section>
 <section>
-<section id="slide-orgc6cf9e1">
-<h2 id="orgc6cf9e1">Linux Networking</h2>
+<section id="slide-org7e6e217">
+<h2 id="org7e6e217">Linux Networking</h2>
 <ul>
 <li>Linux network devices</li>
 <li>Netfilter</li>
@@ -344,13 +344,13 @@
 </ul>
 
 </section>
-<section id="slide-org4a508fe">
-<h3 id="org4a508fe">Linux network devices</h3>
-<div class="outline-text-3" id="text-org4a508fe">
+<section id="slide-org89524d8">
+<h3 id="org89524d8">Linux network devices</h3>
+<div class="outline-text-3" id="text-org89524d8">
 </div>
 </section>
-<section id="slide-org0725ca1">
-<h4 id="org0725ca1">bridge and veth</h4>
+<section id="slide-org2460b92">
+<h4 id="org2460b92">bridge and veth</h4>
 <div style="font-size: 90%;">
 <ul>
 <li><b>Bridge</b>
@@ -390,12 +390,12 @@ ip link add veth1 netns net1 type veth peer name veth2 netns net2
 </div>
 </div>
 </section>
-<section id="slide-org3e23991" data-background="./images/linux-bridge-interface.png" data-background-size="500px">
-<h4 id="org3e23991"></h4>
+<section id="slide-orgac99bbb" data-background="./images/linux-bridge-interface.png" data-background-size="500px">
+<h4 id="orgac99bbb"></h4>
 
 </section>
-<section id="slide-org36f955c">
-<h4 id="org36f955c">tun and tap</h4>
+<section id="slide-org80cb269">
+<h4 id="org80cb269">tun and tap</h4>
 <div style="font-size: 90%;">
 <ul>
 <li><b>TUN</b>
@@ -413,30 +413,53 @@ ip link add veth1 netns net1 type veth peer name veth2 netns net2
 </div>
 
 </section>
-<section id="slide-org5b7e321" data-background="./images/linux-network-device.png" data-background-size="1200px">
-<h4 id="org5b7e321"></h4>
+<section id="slide-orgc5d4b72" data-background="./images/linux-network-device.png" data-background-size="1200px">
+<h4 id="orgc5d4b72"></h4>
 
 </section>
-<section id="slide-org4345327">
-<h3 id="org4345327">Netfilter</h3>
+<section id="slide-org2151d5e">
+<h3 id="org2151d5e">Netfilter</h3>
 <div style="font-size: 90%;">
 <ul>
 <li>The <b>netfilter project</b> is a community-driven collaborative FOSS project that provides packet filtering software for the Linux 2.4.x and later kernel series. The netfilter project is commonly associated with iptables and its successor nftables.</li>
 <li>The <b>netfilter</b> project enables packet filtering, network address [and port] translation (NA[P]T), packet logging, userspace packet queueing and other packet mangling.</li>
 <li>The <b>netfilter hooks</b> are a framework inside the Linux kernel that allows kernel modules to register callback functions at different locations of the Linux network stack. The registered callback function is then called back for every packet that traverses the respective hook within the Linux network stack.</li>
 <li><b>iptables</b> is a generic firewalling software that allows you to define rulesets. Each rule within an IP table consists of a number of classifiers (iptables matches) and one connected action (iptables target).</li>
-<li><b>nftables</b> is the successor of iptables, it allows for much more flexible, scalable and performance packet classification. This is where all the fancy new features are developed.</li>
 
 </ul>
 </div>
 
 </section>
-<section id="slide-org7b4159a" data-background="./images/netfilter-packet-flow.svg" data-background-size="1400px">
-<h4 id="org7b4159a"></h4>
+<section>
+
+<div style="font-size: 90%; text-align: left;">
+<ul>
+<li><b>nftables</b> is the successor of iptables, it allows for much more flexible, scalable and performance packet classification. This is where all the fancy new features are developed.</li>
+
+</ul>
+
+<p>
+reference:
+</p>
+<ul>
+<li><a href="https://www.teldat.com/blog/nftables-and-netfilter-hooks-via-linux-kernel/">https://www.teldat.com/blog/nftables-and-netfilter-hooks-via-linux-kernel/</a></li>
+<li><a href="https://www.netfilter.org/">https://www.netfilter.org/</a></li>
+<li><a href="https://www.fatalerrors.org/a/0tx80Dw.html">https://www.fatalerrors.org/a/0tx80Dw.html</a></li>
+
+</ul>
+</div>
 
 </section>
-<section id="slide-orge45c525">
-<h4 id="orge45c525">Netfilter hooks</h4>
+<section id="slide-orge393715" data-background="./images/netfilter-framework.jpeg" data-background-size="1000px">
+<h4 id="orge393715"></h4>
+
+</section>
+<section id="slide-org2fcd421" data-background="./images/packet-flow-in-netfilter.svg" data-background-size="1400px">
+<h4 id="org2fcd421"></h4>
+
+</section>
+<section id="slide-org8138941">
+<h4 id="org8138941">Netfilter hooks</h4>
 <div style="font-size: 70%;">
 <table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 
@@ -490,11 +513,12 @@ ip link add veth1 netns net1 type veth peer name veth2 netns net2
 </div>
 
 </section>
-<section id="slide-orgc27bbec" data-background="./images/iptables-table-chain.png" data-background-size="1000px">
-<h4 id="orgc27bbec"></h4>
+<section id="slide-org7eadd79" data-background="./images/iptables-table-chain.png" data-background-size="1000px">
+<h4 id="org7eadd79"></h4>
+
 </section>
-<section id="slide-org2d93c4f">
-<h4 id="org2d93c4f">data structure</h4>
+<section id="slide-org6cf44bd">
+<h4 id="org6cf44bd">data structure</h4>
 <div style="font-size: 90%; text-align: left;">
 <p>
 The structure corresponds to the tables in iptables. At present, the kernel registers tables of filter, mangle, nat and raw. 
@@ -539,7 +563,7 @@ struct netns_xt {
 </div>
 
 <p>
-reference：<a href="https://www.fatalerrors.org/a/0tx80Dw.html">https://www.fatalerrors.org/a/0tx80Dw.html</a>
+source code: <a href="https://elixir.bootlin.com/linux/latest/source/include/linux/netfilter/x_tables.h#L223">https://elixir.bootlin.com/linux/latest/source/include/linux/netfilter/x_tables.h#L223</a>
 </p>
 </div>
 
@@ -583,37 +607,44 @@ Structure <code>xt_table</code> is only a basic description of table and does no
 </div>
 
 </section>
-<section id="slide-org827b186">
-<h4 id="org827b186">netfilter table chain</h4>
+<section id="slide-org82c8b00">
+<h4 id="org82c8b00">netfilter table chain</h4>
 </section>
-<section id="slide-org6b10797" data-background="./images/netfilter-table-chain.jpeg" data-background-size="1200px">
-<h4 id="org6b10797"></h4>
+<section id="slide-org1f26100" data-background="./images/netfilter-table-chain.jpeg" data-background-size="1200px">
+<h4 id="org1f26100"></h4>
 
 </section>
-<section id="slide-org76bd0d0">
-<h3 id="org76bd0d0">Ipvs</h3>
+<section id="slide-org6fbca00">
+<h3 id="org6fbca00">Ipvs</h3>
 <ul>
-<li><b>DR</b> encapsulates IP datagrams within IP datagrams.</li>
+<li><b>DR</b> directly routes packets to the backend server by rewriting the MAC address of the data frame with the MAC address of the selected backend server.</li>
+<li><b>IP tunneling</b> encapsulates IP datagrams within IP datagrams.</li>
 <li><b>NAT</b> rewrites source and destination addresses.</li>
-<li><b>IP</b> tunneling directly routes packets to the backend server by rewriting the MAC address of the data frame with the MAC address of the selected backend server.</li>
+
+<li>reference:
+<ul>
+<li><a href="http://www.linuxvirtualserver.org/Documents.html">http://www.linuxvirtualserver.org/Documents.html</a></li>
+<li><a href="https://debugged.it/blog/ipvs-the-linux-load-balancer/">https://debugged.it/blog/ipvs-the-linux-load-balancer/</a></li>
+
+</ul></li>
 
 </ul>
 
 </section>
-<section id="slide-orgee82b65" data-background="./images/ipvs-dr-mode.svg" data-background-size="1000px">
-<h4 id="orgee82b65"></h4>
+<section id="slide-org5dade90" data-background="./images/ipvs-dr-mode.svg" data-background-size="1000px">
+<h4 id="org5dade90"></h4>
 
 </section>
-<section id="slide-orga89173f" data-background="./images/ipvs-nat-mode.svg" data-background-size="600px">
-<h4 id="orga89173f"></h4>
+<section id="slide-orgf00a7f4" data-background="./images/ipvs-nat-mode.svg" data-background-size="600px">
+<h4 id="orgf00a7f4"></h4>
 
 </section>
-<section id="slide-org8f30ac8" data-background="./images/ipvs-tun-mode.svg" data-background-size="1200px">
-<h4 id="org8f30ac8"></h4>
+<section id="slide-orgbe0c067" data-background="./images/ipvs-tun-mode.svg" data-background-size="1200px">
+<h4 id="orgbe0c067"></h4>
 
 </section>
-<section id="slide-org0731fca">
-<h4 id="org0731fca">iptables issues</h4>
+<section id="slide-orgfec5d8d">
+<h4 id="orgfec5d8d">iptables issues</h4>
 <div style="font-size: 90%; text-align: left;">
 <p>
 There are three aspects to look at when it comes to issues with iptables as a load balancer:
@@ -642,13 +673,13 @@ There are three aspects to look at when it comes to issues with iptables as a lo
 
 </div>
 </section>
-<section id="slide-orga24e2c1" data-background="./images/kubernetes-ipvs.png" data-background-size="800px">
-<h4 id="orga24e2c1"></h4>
+<section id="slide-orgd753db6" data-background="./images/kubernetes-ipvs.png" data-background-size="800px">
+<h4 id="orgd753db6"></h4>
 
 </section>
-<section id="slide-org2924d96">
-<h3 id="org2924d96">eBPF</h3>
-<div style="font-size: 90%;">
+<section id="slide-org263f673">
+<h3 id="org263f673">eBPF</h3>
+<div style="font-size: 90%; text-align: left;">
 <p>
 <b>eBPF</b> is a programming system that allows special sandboxed programs to run in the kernel without passing back and forth between kernel and user space, like we saw with Netfilter and iptables.
 </p>
@@ -693,19 +724,19 @@ In addition to socket filtering, other supported attach points in the kernel are
 </div>
 
 </section>
-<section id="slide-org81733f2" data-background="./images/ebpf-example.png" data-background-size="600px">
-<h4 id="org81733f2"></h4>
+<section id="slide-org2e99b3a" data-background="./images/ebpf-example.png" data-background-size="600px">
+<h4 id="org2e99b3a"></h4>
 
 </section>
-<section id="slide-org7f12cd8" data-background="./images/cilium-interacts-with-ebpf.png" data-background-size="1000px">
-<h4 id="org7f12cd8"></h4>
+<section id="slide-orgff7a69a" data-background="./images/cilium-interacts-with-ebpf.png" data-background-size="1000px">
+<h4 id="orgff7a69a"></h4>
 
 
 </section>
 </section>
 <section>
-<section id="slide-orgc6025bf">
-<h2 id="orgc6025bf">Kubernetes networking model</h2>
+<section id="slide-org5ae6b5c">
+<h2 id="org5ae6b5c">Kubernetes networking model</h2>
 <ul>
 <li>Pod Networking</li>
 <li>Service Routing</li>
@@ -713,8 +744,8 @@ In addition to socket filtering, other supported attach points in the kernel are
 </ul>
 
 </section>
-<section id="slide-org2eb6e30">
-<h3 id="org2eb6e30">Pod Networking</h3>
+<section id="slide-orged9a8ce">
+<h3 id="orged9a8ce">Pod Networking</h3>
 <ul>
 <li>CNI(Container Networking Interface)</li>
 <li>Overlay Networking</li>
@@ -723,8 +754,8 @@ In addition to socket filtering, other supported attach points in the kernel are
 </ul>
 
 </section>
-<section id="slide-orgaa4ca24">
-<h4 id="orgaa4ca24">Concepts</h4>
+<section id="slide-orge1924bf">
+<h4 id="orge1924bf">Concepts</h4>
 <div style="font-size: 90%; text-align: left;">
 <ul>
 <li><b>VTEP</b> 
@@ -737,8 +768,8 @@ In addition to socket filtering, other supported attach points in the kernel are
 </div>
 
 </section>
-<section id="slide-orgc939504">
-<h4 id="orgc939504">CNI</h4>
+<section id="slide-orgfc982ac">
+<h4 id="orgfc982ac">CNI</h4>
 <div style="font-size: 90%; text-align: left;">
 <p>
 Kubernetes relies on the CNI project to comply with the following requirements:
@@ -791,18 +822,18 @@ Kubernetes relies on the CNI project to comply with the following requirements:
 </div>
 
 </section>
-<section id="slide-org615c613">
-<h4 id="org615c613">Overlay Networking</h4>
+<section id="slide-orgf167fa8">
+<h4 id="orgf167fa8">Overlay Networking</h4>
 </section>
-<section id="slide-org6cef921" data-background="./images/vxlan-tunnel-detailed.png" data-background-size="800px">
-<h4 id="org6cef921"></h4>
+<section id="slide-org6dadaaa" data-background="./images/vxlan-tunnel-detailed.png" data-background-size="800px">
+<h4 id="org6dadaaa"></h4>
 </section>
-<section id="slide-orga5ba95b" data-background="./images/vxlan-encapsulation.png" data-background-size="800px">
-<h4 id="orga5ba95b"></h4>
+<section id="slide-orgda32999" data-background="./images/vxlan-encapsulation.png" data-background-size="800px">
+<h4 id="orgda32999"></h4>
 
 </section>
-<section id="slide-orge6d4041">
-<h4 id="orge6d4041">Routing</h4>
+<section id="slide-org1542f6f">
+<h4 id="org1542f6f">Routing</h4>
 <div style="font-size: 90%; text-align: left;">
 <p>
 <b>Border Gateway Protocol (BGP)</b> is one of the most commonly used protocols to distribute workload routes. It is used in projects such as Calico and Kube-Router. Not only does BGP enable communication of workload routes in the cluster but its internal routers can also be peered with external routers. Doing so can make external network fabrics aware of how to route to Pod IPs.
@@ -810,12 +841,12 @@ Kubernetes relies on the CNI project to comply with the following requirements:
 
 </div>
 </section>
-<section id="slide-orgd9ea58d" data-background="./images/calico-routing.png" data-background-size="800px">
-<h4 id="orgd9ea58d"></h4>
+<section id="slide-org6cc2a0f" data-background="./images/calico-routing.png" data-background-size="800px">
+<h4 id="org6cc2a0f"></h4>
 
 </section>
-<section id="slide-org5ff6fce">
-<h4 id="org5ff6fce">Calico</h4>
+<section id="slide-org9a7c65e">
+<h4 id="org9a7c65e">Calico</h4>
 <div style="font-size: 90%; text-align: left;">
 <p>
 Calico offers a variety of ways to route packets inside of the cluster. This includes:
@@ -844,16 +875,16 @@ Calico offers a variety of ways to route packets inside of the cluster. This inc
 
 </div>
 </section>
-<section id="slide-org08d1b3c" data-background="./images/calico-component-relationship.png" data-background-size="800px">
-<h4 id="org08d1b3c"></h4>
+<section id="slide-org9b76be2" data-background="./images/calico-component-relationship.png" data-background-size="800px">
+<h4 id="org9b76be2"></h4>
 
 </section>
-<section id="slide-orge966cbe" data-background="./images/calico-crosssubnet-mode.png" data-background-size="800px">
-<h4 id="orge966cbe"></h4>
+<section id="slide-org5ce1cc1" data-background="./images/calico-crosssubnet-mode.png" data-background-size="800px">
+<h4 id="org5ce1cc1"></h4>
 
 </section>
-<section id="slide-org21e36ae">
-<h3 id="org21e36ae">Service Routing</h3>
+<section id="slide-orgfe45477">
+<h3 id="orgfe45477">Service Routing</h3>
 <ul>
 <li>ClusterIP</li>
 <li>NodePort</li>
@@ -863,8 +894,8 @@ Calico offers a variety of ways to route packets inside of the cluster. This inc
 </ul>
 
 </section>
-<section id="slide-org4a26096">
-<h4 id="org4a26096">Service Implementation</h4>
+<section id="slide-orga2f7b09">
+<h4 id="orga2f7b09">Service Implementation</h4>
 <ul>
 <li>Kube-proxy
 <ul>
@@ -876,27 +907,27 @@ Calico offers a variety of ways to route packets inside of the cluster. This inc
 </ul>
 
 </section>
-<section id="slide-orgbf4ae3e" data-background="./images/clusterip-service.png" data-background-size="800px">
-<h4 id="orgbf4ae3e"></h4>
+<section id="slide-org91df3a8" data-background="./images/clusterip-service.png" data-background-size="800px">
+<h4 id="org91df3a8"></h4>
 
 </section>
-<section id="slide-orgb600400" data-background="./images/nodeport-service.png" data-background-size="800px">
-<h4 id="orgb600400"></h4>
+<section id="slide-org732c4b0" data-background="./images/nodeport-service.png" data-background-size="800px">
+<h4 id="org732c4b0"></h4>
 
 </section>
-<section id="slide-org0f096fc" data-background="./images/loadbalancer-service.png" data-background-size="800px">
-<h4 id="org0f096fc"></h4>
+<section id="slide-orgdde3c1c" data-background="./images/loadbalancer-service.png" data-background-size="800px">
+<h4 id="orgdde3c1c"></h4>
 
 </section>
-<section id="slide-orga8bafd8" data-background="./images/ingress-traffic.png" data-background-size="800px">
-<h4 id="orga8bafd8"></h4>
+<section id="slide-org761c3d7" data-background="./images/ingress-traffic.png" data-background-size="800px">
+<h4 id="org761c3d7"></h4>
 
 
 </section>
 </section>
 <section>
-<section id="slide-org98be35b">
-<h2 id="org98be35b">Q&amp;A</h2>
+<section id="slide-orgaa5c63f">
+<h2 id="orgaa5c63f">Q&amp;A</h2>
 </section>
 </section>
 </div>

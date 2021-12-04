@@ -270,12 +270,28 @@
    - The *netfilter* project enables packet filtering, network address [and port] translation (NA[P]T), packet logging, userspace packet queueing and other packet mangling.
    - The *netfilter hooks* are a framework inside the Linux kernel that allows kernel modules to register callback functions at different locations of the Linux network stack. The registered callback function is then called back for every packet that traverses the respective hook within the Linux network stack.
    - *iptables* is a generic firewalling software that allows you to define rulesets. Each rule within an IP table consists of a number of classifiers (iptables matches) and one connected action (iptables target).
+   #+REVEAL_HTML: </div>
+
+   #+REVEAL: split
+
+   #+REVEAL_HTML: <div style="font-size: 90%; text-align: left;">
    - *nftables* is the successor of iptables, it allows for much more flexible, scalable and performance packet classification. This is where all the fancy new features are developed.
+
+   reference:
+     - https://www.teldat.com/blog/nftables-and-netfilter-hooks-via-linux-kernel/
+     - https://www.netfilter.org/
+     - https://www.fatalerrors.org/a/0tx80Dw.html
    #+REVEAL_HTML: </div>
 
 *** 
    :PROPERTIES:
-   :reveal_background: ./images/netfilter-packet-flow.svg
+   :reveal_background: ./images/netfilter-framework.jpeg
+   :reveal_background_size: 1000px
+   :END:
+
+*** 
+   :PROPERTIES:
+   :reveal_background: ./images/packet-flow-in-netfilter.svg
    :reveal_background_size: 1400px
    :END:
 
@@ -296,6 +312,7 @@
    :reveal_background: ./images/iptables-table-chain.png
    :reveal_background_size: 1000px
    :END:
+
 *** data structure
 
     #+REVEAL_HTML: <div style="font-size: 90%; text-align: left;">
@@ -338,7 +355,7 @@
       };
     #+end_src
 
-    reference：https://www.fatalerrors.org/a/0tx80Dw.html
+    source code: https://elixir.bootlin.com/linux/latest/source/include/linux/netfilter/x_tables.h#L223
     #+REVEAL_HTML: </div>
 
     #+REVEAL: split
@@ -384,9 +401,13 @@
     :END:
 
 ** Ipvs
-   - *DR* encapsulates IP datagrams within IP datagrams.
+   - *DR* directly routes packets to the backend server by rewriting the MAC address of the data frame with the MAC address of the selected backend server.
+   - *IP tunneling* encapsulates IP datagrams within IP datagrams.
    - *NAT* rewrites source and destination addresses.
-   - *IP* tunneling directly routes packets to the backend server by rewriting the MAC address of the data frame with the MAC address of the selected backend server.
+
+   - reference:
+     - http://www.linuxvirtualserver.org/Documents.html
+     - https://debugged.it/blog/ipvs-the-linux-load-balancer/
 
 *** 
     :PROPERTIES:
@@ -429,7 +450,7 @@
 
 ** eBPF
 
-   #+REVEAL_HTML: <div style="font-size: 90%;">
+   #+REVEAL_HTML: <div style="font-size: 90%; text-align: left;">
    *eBPF* is a programming system that allows special sandboxed programs to run in the kernel without passing back and forth between kernel and user space, like we saw with Netfilter and iptables.
 
    In addition to socket filtering, other supported attach points in the kernel are as follows:
