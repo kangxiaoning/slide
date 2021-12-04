@@ -592,21 +592,51 @@
       - Kube-proxy is an agent that runs on every cluster node. It is primarily responsible for making Services available to the Pods running on the local node. It achieves this by watching the API server for Services and Endpoints and programming the Linux networking stack (using iptables, for example) to handle packets accordingly.
       - Historically, kube-proxy acted as a network proxy between Pods running on the node and Services. This is where the kube-proxy name came from. As the Kubernetes project evolved, however, kube-proxy stopped being a proxy and became more of a node agent or localized control plane.
 
+*** ClusterIP
+    - ClusterIP Service creates a virtual IP address (VIP) that is backed by one or more Pods. Usually, the VIP is available only to workloads running inside the cluster.
+
 *** 
    :PROPERTIES:
    :reveal_background: ./images/clusterip-service.png
    :reveal_background_size: 800px
    :END:
 
+*** NodePort
+
+    #+REVEAL_HTML: <div style="font-size: 90%; text-align: left;">
+    The *NodePort* Service is useful when you need to expose a Service to network clients outside of the cluster, such as existing applications running in VMs or users of a web application.
+
+    As the name suggests, the NodePort Service exposes the Service on a port across all cluster nodes. The port is assigned randomly from a configurable port range. Once assigned, all nodes in the cluster listen for connections on the given port.
+    #+REVEAL_HTML: </div>
 *** 
    :PROPERTIES:
    :reveal_background: ./images/nodeport-service.png
    :reveal_background_size: 800px
    :END:
 
+*** LoadBalancer
+
+    #+REVEAL_HTML: <div style="font-size: 90%; text-align: left;">
+    The *LoadBalancer* Service builds upon the NodePort Service to address some of its downsides. At its core, the LoadBalancer Service is a NodePort Service under the hood. However, the LoadBalancer Service has additional functionality that is satisfied by a controller.
+
+    The controller, also known as a cloud provider integration, is responsible for automatically gluing the NodePort Service with an external load balancer. In other words, the controller takes care of creating, managing, and configuring external load balancers in response to the configuration of LoadBalancer Services in the cluster. The controller does this by interacting with APIs that provision or configure load balancers.
+    #+REVEAL_HTML: </div>
+
 *** 
    :PROPERTIES:
    :reveal_background: ./images/loadbalancer-service.png
+   :reveal_background_size: 800px
+   :END:
+
+*** Ingress
+
+    #+REVEAL_HTML: <div style="font-size: 90%; text-align: left;">
+    *Ingress* is a Kubernetes-specific L7 (HTTP) load balancer, which is accessible externally, contrasting with L4 ClusterIP service, which is internal to the cluster. This is the typical choice for exposing an HTTP(S) workload to external users. An ingress can be a single entry point into an API or a microservice-based architecture. Traffic can be routed to services based on HTTP information in the request. Ingress is a configuration spec (with multiple implementations) for routing HTTP traffic to Kubernetes services.
+    #+REVEAL_HTML: </div>
+
+*** 
+   :PROPERTIES:
+   :reveal_background: ./images/ingress-architecture.png
    :reveal_background_size: 800px
    :END:
 
