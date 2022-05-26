@@ -4,6 +4,9 @@
 #+REVEAL_THEME: white
 #+REVEAL_PLUGINS: (highlight)
 #+OPTIONS: reveal_slide_number:c/t toc:nil num:nil reveal_width:1400 reveal_height:1000
+#+OPTIONS: reveal_single_file:t
+#+REVEAL_HIGHLIGHT_CSS: https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/styles/github.min.css
+
 
 
 * Objectives

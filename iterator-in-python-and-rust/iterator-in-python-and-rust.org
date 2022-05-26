@@ -3,6 +3,7 @@
 
 #+REVEAL_THEME: white
 #+OPTIONS:  reveal_slide_number:c/t toc:nil num:nil
+#+OPTIONS: reveal_single_file:t
 
 
 * Objectives
