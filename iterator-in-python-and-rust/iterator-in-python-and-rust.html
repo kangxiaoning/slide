@@ -7,32 +7,21 @@
 <style type="text/css">
 .underline { text-decoration: underline; }
 </style>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@3.8.0/css/reveal.css"/>
+<link rel="stylesheet" href="/Users/kangxiaoning/workspace/reveal.js/dist/reveal.css"/>
 
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@3.8.0/css/theme/white.css" id="theme"/>
-
-<!-- If the query includes 'print-pdf', include the PDF print sheet -->
-<script>
-    if( window.location.search.match( /print-pdf/gi ) ) {
-        var link = document.createElement( 'link' );
-        link.rel = 'stylesheet';
-        link.type = 'text/css';
-        link.href = 'https://cdn.jsdelivr.net/npm/reveal.js@3.8.0/css/print/pdf.css';
-        document.getElementsByTagName( 'head' )[0].appendChild( link );
-    }
-</script>
+<link rel="stylesheet" href="/Users/kangxiaoning/workspace/reveal.js/dist/theme/white.css" id="theme"/>
 </head>
 <body>
 <div class="reveal">
 <div class="slides">
 <section id="sec-title-slide">
-<h1 class="title">Iterator in Python and Rust</h1><h2 class="author">kangxiaoning</h2><p class="date">Created: 2021-04-11 Sun 23:06</p>
+<h1 class="title">Iterator in Python and Rust</h1><h2 class="author">kangxiaoning</h2><p class="date">Created: 2022-05-26 Thu 18:30</p>
 </section>
 
 
 <section>
-<section id="slide-org3a25f13">
-<h2 id="org3a25f13">Objectives</h2>
+<section id="slide-orgedaec09">
+<h2 id="orgedaec09">Objectives</h2>
 <ul>
 <li>Understand iterator and iterable</li>
 <li>Implement iterator in python and rust</li>
@@ -42,8 +31,8 @@
 </section>
 </section>
 <section>
-<section id="slide-orgb7fb8f5">
-<h2 id="orgb7fb8f5">Agenda</h2>
+<section id="slide-org00b3e30">
+<h2 id="org00b3e30">Agenda</h2>
 <ul>
 <li>Questions</li>
 <li>What</li>
@@ -56,8 +45,8 @@
 </section>
 </section>
 <section>
-<section id="slide-org75add63">
-<h2 id="org75add63">Questions</h2>
+<section id="slide-org3568eec">
+<h2 id="org3568eec">Questions</h2>
 <ul>
 <li>What is iterator?</li>
 <li>What is iterable?</li>
@@ -68,24 +57,24 @@
 </section>
 </section>
 <section>
-<section id="slide-org2a94ec6">
-<h2 id="org2a94ec6">What</h2>
+<section id="slide-org5a0c860">
+<h2 id="org5a0c860">What</h2>
 <ul>
 <li>In computer programming, an iterator is an object that enables a programmer to traverse a container, particularly lists.</li>
 
 </ul>
 </section>
-<section id="slide-orga8481c6">
-<h3 id="orga8481c6">Python</h3>
+<section id="slide-orgaaad48a">
+<h3 id="orgaaad48a">Python</h3>
 <ul>
-<li>An iterable object is an object that implements _<sub>iter</sub>__, which is expected to return an iterator object.</li>
+<li>An iterable object is an object that implements <span class="underline"><span class="underline">iter</span></span>, which is expected to return an iterator object.</li>
 <li>An iterator is an object that implements next, which is expected to return the next element of the iterable object that returned it,
 and raise a StopIteration exception when no more elements are available.</li>
 
 </ul>
 </section>
-<section id="slide-org9d3d384">
-<h3 id="org9d3d384">Rust</h3>
+<section id="slide-orge894bc2">
+<h3 id="orge894bc2">Rust</h3>
 <ul>
 <li>An iterable</li>
 
@@ -111,7 +100,7 @@ and raise a StopIteration exception when no more elements are available.</li>
 
 <pre class="src src-rust"><span style="color: #F92672;">pub</span> <span style="color: #F92672;">trait</span> <span style="color: #66D9EF;">Iterator</span> <span style="color: #AE81FF;">{</span>
     <span style="color: #F92672;">type</span> <span style="color: #66D9EF;">Item</span>;
-    <span style="color: #F92672;">fn</span> <span style="color: #A6E22E;">next</span><span style="color: #66D9EF;">(</span>&amp;<span style="color: #F92672;">mut</span> <span style="color: #F92672;">self</span><span style="color: #66D9EF;">)</span> -&gt; <span style="color: #66D9EF;">Option</span><span style="color: #66D9EF;">&lt;</span><span style="color: #66D9EF;">Self</span>::<span style="color: #66D9EF;">Item</span><span style="color: #66D9EF;">&gt;</span>;
+    <span style="color: #F92672;">fn</span> <span style="color: #A6E22E;">next</span><span style="color: #66D9EF;">(</span><span style="color: #F8F8F2; background-color: #272822;">&amp;</span><span style="color: #F92672;">mut</span> <span style="color: #F92672;">self</span><span style="color: #66D9EF;">)</span> -&gt; <span style="color: #66D9EF;">Option</span><span style="color: #66D9EF;">&lt;</span><span style="color: #66D9EF;">Self</span>::<span style="color: #66D9EF;">Item</span><span style="color: #66D9EF;">&gt;</span>;
 <span style="color: #AE81FF;">}</span>
 </pre>
 </div>
@@ -119,29 +108,29 @@ and raise a StopIteration exception when no more elements are available.</li>
 </section>
 </section>
 <section>
-<section id="slide-org9fadf06">
-<h2 id="org9fadf06">How</h2>
-<div class="outline-text-2" id="text-org9fadf06">
+<section id="slide-org9d258c1">
+<h2 id="org9d258c1">How</h2>
+<div class="outline-text-2" id="text-org9d258c1">
 </div>
 </section>
-<section id="slide-orgcbed249" data-background="./images/iterator.jpg" data-background-transition="slide">
-<h3 id="orgcbed249"></h3>
+<section id="slide-org779ca9e" data-background="./images/iterator.jpg" data-background-transition="slide">
+<h3 id="org779ca9e"></h3>
 
 </section>
-<section id="slide-org4b6bb54">
-<h3 id="org4b6bb54">Python</h3>
+<section id="slide-org0ad183c">
+<h3 id="org0ad183c">Python</h3>
 <div class="org-src-container">
 
 <pre class="src src-python"><span style="color: #F92672;">class</span> <span style="color: #66D9EF;">GenerateNumbers</span>:
     <span style="color: #F92672;">def</span> <span style="color: #A6E22E;">__init__</span><span style="color: #AE81FF;">(</span><span style="color: #F92672;">self</span>, start, end<span style="color: #AE81FF;">)</span>:
         <span style="color: #F92672;">self</span>.current = start
-        <span style="color: #F92672;">self</span>.high = end
+        <span style="color: #F92672;">self</span>.<span style="color: #FD971F;">high</span> = end
 
     <span style="color: #F92672;">def</span> <span style="color: #A6E22E;">__iter__</span><span style="color: #AE81FF;">(</span><span style="color: #F92672;">self</span><span style="color: #AE81FF;">)</span>:
         <span style="color: #F92672;">return</span> <span style="color: #F92672;">self</span>
 
     <span style="color: #F92672;">def</span> <span style="color: #A6E22E;">__next__</span><span style="color: #AE81FF;">(</span><span style="color: #F92672;">self</span><span style="color: #AE81FF;">)</span> -&gt; <span style="color: #F92672;">int</span>:
-        <span style="color: #F92672;">if</span> <span style="color: #F92672;">self</span>.current &gt; <span style="color: #F92672;">self</span>.high:
+        <span style="color: #F92672;">if</span> <span style="color: #F92672;">self</span>.current &gt; <span style="color: #F92672;">self</span>.<span style="color: #FD971F;">high</span>:
             <span style="color: #F92672;">raise</span> <span style="color: #66D9EF;">StopIteration</span>
         <span style="color: #F92672;">else</span>:
             <span style="color: #F92672;">self</span>.current += <span style="color: #AE81FF;">1</span>
@@ -168,11 +157,11 @@ and raise a StopIteration exception when no more elements are available.</li>
 <span style="color: #F92672;">class</span> <span style="color: #66D9EF;">AlphaListIterator</span>:
     <span style="color: #F92672;">def</span> <span style="color: #A6E22E;">__init__</span><span style="color: #AE81FF;">(</span><span style="color: #F92672;">self</span>, elements: <span style="color: #F92672;">list</span><span style="color: #AE81FF;">)</span> -&gt; <span style="color: #AE81FF;">None</span>:
         <span style="color: #F92672;">self</span>.alpha_list = elements
-        <span style="color: #F92672;">self</span>.index = <span style="color: #AE81FF;">0</span>
+        <span style="color: #F92672;">self</span>.<span style="color: #FD971F;">index</span> = <span style="color: #AE81FF;">0</span>
 
     <span style="color: #F92672;">def</span> <span style="color: #A6E22E;">__next__</span><span style="color: #AE81FF;">(</span><span style="color: #F92672;">self</span><span style="color: #AE81FF;">)</span>:
         <span style="color: #F92672;">try</span>:
-            <span style="color: #FD971F;">result</span> = <span style="color: #F92672;">self</span>.alpha_list<span style="color: #AE81FF;">[</span><span style="color: #F92672;">self</span>.index<span style="color: #AE81FF;">]</span>
+            result = <span style="color: #F92672;">self</span>.alpha_list<span style="color: #AE81FF;">[</span><span style="color: #F92672;">self</span>.index<span style="color: #AE81FF;">]</span>
         <span style="color: #F92672;">except</span> <span style="color: #66D9EF;">IndexError</span>:
             <span style="color: #F92672;">raise</span> <span style="color: #66D9EF;">StopIteration</span>
         <span style="color: #F92672;">self</span>.index += <span style="color: #AE81FF;">1</span>
@@ -190,11 +179,11 @@ and raise a StopIteration exception when no more elements are available.</li>
 <div class="org-src-container">
 
 <pre class="src src-python"><span style="color: #F92672;">if</span> <span style="color: #F92672;">__name__</span> == <span style="color: #E6DB74;">"__main__"</span>:
-    <span style="color: #FD971F;">g</span> = GenerateNumbers<span style="color: #AE81FF;">(</span><span style="color: #AE81FF;">0</span>, <span style="color: #AE81FF;">10</span><span style="color: #AE81FF;">)</span>
+    g = GenerateNumbers<span style="color: #AE81FF;">(</span><span style="color: #AE81FF;">0</span>, <span style="color: #AE81FF;">10</span><span style="color: #AE81FF;">)</span>
     <span style="color: #F92672;">for</span> i <span style="color: #F92672;">in</span> g:
         <span style="color: #F92672;">print</span><span style="color: #AE81FF;">(</span>i<span style="color: #AE81FF;">)</span>
 
-    <span style="color: #FD971F;">alpha_list</span> = AlphaList<span style="color: #AE81FF;">(</span><span style="color: #66D9EF;">[</span><span style="color: #AE81FF;">1</span>, <span style="color: #AE81FF;">2</span>, <span style="color: #AE81FF;">3</span><span style="color: #66D9EF;">]</span><span style="color: #AE81FF;">)</span>
+    alpha_list = AlphaList<span style="color: #AE81FF;">(</span><span style="color: #66D9EF;">[</span><span style="color: #AE81FF;">1</span>, <span style="color: #AE81FF;">2</span>, <span style="color: #AE81FF;">3</span><span style="color: #66D9EF;">]</span><span style="color: #AE81FF;">)</span>
     <span style="color: #F92672;">print</span><span style="color: #AE81FF;">(</span>alpha_list<span style="color: #AE81FF;">)</span>
     <span style="color: #F92672;">for</span> e <span style="color: #F92672;">in</span> alpha_list:
         <span style="color: #F92672;">print</span><span style="color: #AE81FF;">(</span>e<span style="color: #AE81FF;">)</span>
@@ -202,7 +191,7 @@ and raise a StopIteration exception when no more elements are available.</li>
     <span style="color: #F92672;">for</span> e <span style="color: #F92672;">in</span> alpha_list:
         <span style="color: #F92672;">print</span><span style="color: #AE81FF;">(</span>e<span style="color: #AE81FF;">)</span>
 
-    <span style="color: #FD971F;">it1</span> = AlphaListIterator<span style="color: #AE81FF;">(</span><span style="color: #66D9EF;">[</span><span style="color: #AE81FF;">1</span>, <span style="color: #AE81FF;">2</span>, <span style="color: #AE81FF;">3</span>, <span style="color: #AE81FF;">4</span>, <span style="color: #AE81FF;">5</span><span style="color: #66D9EF;">]</span><span style="color: #AE81FF;">)</span>
+    it1 = AlphaListIterator<span style="color: #AE81FF;">(</span><span style="color: #66D9EF;">[</span><span style="color: #AE81FF;">1</span>, <span style="color: #AE81FF;">2</span>, <span style="color: #AE81FF;">3</span>, <span style="color: #AE81FF;">4</span>, <span style="color: #AE81FF;">5</span><span style="color: #66D9EF;">]</span><span style="color: #AE81FF;">)</span>
     <span style="color: #F92672;">for</span> e <span style="color: #F92672;">in</span> it1:
         <span style="color: #F92672;">print</span><span style="color: #AE81FF;">(</span>e<span style="color: #AE81FF;">)</span>
 
@@ -215,8 +204,8 @@ and raise a StopIteration exception when no more elements are available.</li>
 </div>
 
 </section>
-<section id="slide-orgab5e37c">
-<h3 id="orgab5e37c">Rust</h3>
+<section id="slide-org361a53a">
+<h3 id="org361a53a">Rust</h3>
 <div class="org-src-container">
 
 <pre class="src src-rust"><span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">AlphaList</span><span style="color: #AE81FF;">&lt;</span><span style="color: #66D9EF;">T</span><span style="color: #AE81FF;">&gt;</span> <span style="color: #AE81FF;">{</span>
@@ -249,7 +238,7 @@ and raise a StopIteration exception when no more elements are available.</li>
     <span style="color: #FD971F;">T</span>: <span style="color: #66D9EF;">Clone</span>,
 <span style="color: #AE81FF;">{</span>
     <span style="color: #F92672;">type</span> <span style="color: #66D9EF;">Item</span> = <span style="color: #66D9EF;">T</span>;
-    <span style="color: #F92672;">fn</span> <span style="color: #A6E22E;">next</span><span style="color: #66D9EF;">(</span>&amp;<span style="color: #F92672;">mut</span> <span style="color: #F92672;">self</span><span style="color: #66D9EF;">)</span> -&gt; <span style="color: #66D9EF;">Option</span><span style="color: #66D9EF;">&lt;</span><span style="color: #66D9EF;">Self</span>::<span style="color: #66D9EF;">Item</span><span style="color: #66D9EF;">&gt;</span> <span style="color: #66D9EF;">{</span>
+    <span style="color: #F92672;">fn</span> <span style="color: #A6E22E;">next</span><span style="color: #66D9EF;">(</span><span style="color: #F8F8F2; background-color: #272822;">&amp;</span><span style="color: #F92672;">mut</span> <span style="color: #F92672;">self</span><span style="color: #66D9EF;">)</span> -&gt; <span style="color: #66D9EF;">Option</span><span style="color: #66D9EF;">&lt;</span><span style="color: #66D9EF;">Self</span>::<span style="color: #66D9EF;">Item</span><span style="color: #66D9EF;">&gt;</span> <span style="color: #66D9EF;">{</span>
         <span style="color: #F92672;">match</span> <span style="color: #F92672;">self</span>.alpha_list.get<span style="color: #A6E22E;">(</span><span style="color: #F92672;">self</span>.index<span style="color: #A6E22E;">)</span> <span style="color: #A6E22E;">{</span>
             <span style="color: #66D9EF;">Some</span><span style="color: #E6DB74;">(</span>e<span style="color: #E6DB74;">)</span> =&gt; <span style="color: #E6DB74;">{</span>
                 <span style="color: #F92672;">self</span>.index += <span style="color: #AE81FF;">1</span>;
@@ -292,15 +281,15 @@ and raise a StopIteration exception when no more elements are available.</li>
 </div>
 
 </section>
-<section id="slide-orgf610cfc" data-background="./images/iterator-python.jpg" data-background-size="800px">
-<h3 id="orgf610cfc"></h3>
+<section id="slide-org3cfbf4c" data-background="./images/iterator-python.jpg" data-background-size="800px">
+<h3 id="org3cfbf4c"></h3>
 
 </section>
-<section id="slide-org1898f74">
-<h3 id="org1898f74"></h3>
+<section id="slide-org800b10d">
+<h3 id="org800b10d"></h3>
 <ul>
-<li>An iterable should never act as an iterator over itself. In other words, iterables must implement _<sub>iter</sub>__, but not _<sub>next</sub>__.</li>
-<li>On the other hand, iterators should always be iterable. An iterator’s _<sub>iter</sub>__ should just return self.</li>
+<li>An iterable should never act as an iterator over itself. In other words, iterables must implement <span class="underline"><span class="underline">iter</span></span>, but not <span class="underline"><span class="underline">next</span></span>.</li>
+<li>On the other hand, iterators should always be iterable. An iterator’s <span class="underline"><span class="underline">iter</span></span> should just return self.</li>
 <li>to support multiple traversals of aggregate objects.</li>
 <li>only pay for what you need.</li>
 
@@ -310,8 +299,8 @@ and raise a StopIteration exception when no more elements are available.</li>
 </section>
 </section>
 <section>
-<section id="slide-org0da2405">
-<h2 id="org0da2405">Desugar for loop</h2>
+<section id="slide-org28e4a87">
+<h2 id="org28e4a87">Desugar for loop</h2>
 <ul>
 <li>Python</li>
 
@@ -321,7 +310,7 @@ and raise a StopIteration exception when no more elements are available.</li>
 <pre class="src src-python"><span style="color: #FD971F;">it</span> = <span style="color: #F92672;">iter</span><span style="color: #AE81FF;">(</span>sequence<span style="color: #AE81FF;">)</span>
 <span style="color: #F92672;">while</span> <span style="color: #AE81FF;">True</span>:
     <span style="color: #F92672;">try</span>:
-        <span style="color: #FD971F;">value</span> = <span style="color: #F92672;">next</span><span style="color: #AE81FF;">(</span>it<span style="color: #AE81FF;">)</span>
+        value = <span style="color: #F92672;">next</span><span style="color: #AE81FF;">(</span>it<span style="color: #AE81FF;">)</span>
 <span style="color: #F92672;">except</span> <span style="color: #66D9EF;">StopIteration</span>:
         <span style="color: #F92672;">break</span>
     <span style="color: #F92672;">print</span><span style="color: #AE81FF;">(</span>value<span style="color: #AE81FF;">)</span>
@@ -347,8 +336,8 @@ and raise a StopIteration exception when no more elements are available.</li>
 </section>
 </section>
 <section>
-<section id="slide-orgc5edfaf">
-<h2 id="orgc5edfaf">Why</h2>
+<section id="slide-orgd5b36e1">
+<h2 id="orgd5b36e1">Why</h2>
 <ul>
 <li>In procedural languages it is common to use the subscript operator and a loop counter to loop through all the elements in a sequence such as an array.
 Although indexing may also be used with some object-oriented containers, the use of iterators may have some advantages:</li>
@@ -380,14 +369,17 @@ With indexing this is problematic since the index numbers must change.</li>
 </section>
 </section>
 <section>
-<section id="slide-org3a2c212">
-<h2 id="org3a2c212">Q&amp;A</h2>
+<section id="slide-orgea892e0">
+<h2 id="orgea892e0">Q&amp;A</h2>
 </section>
 </section>
 </div>
 </div>
-<script src="https://cdn.jsdelivr.net/npm/reveal.js@3.8.0/lib/js/head.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/reveal.js@3.8.0/js/reveal.js"></script>
+<script src="/Users/kangxiaoning/workspace/reveal.js/dist/reveal.js"></script>
+<script src="/Users/kangxiaoning/workspace/reveal.js/plugin/markdown/markdown.js"></script>
+<script src="/Users/kangxiaoning/workspace/reveal.js/plugin/notes/notes.js"></script>
+<script src="/Users/kangxiaoning/workspace/reveal.js/plugin/search/search.js"></script>
+<script src="/Users/kangxiaoning/workspace/reveal.js/plugin/zoom/zoom.js"></script>
 <script>
 // Full list of configuration options available here:
 // https://github.com/hakimel/reveal.js#configuration
@@ -406,17 +398,15 @@ hashOneBasedIndex: false,
 pdfSeparateFragments: true,
 overview: true,
 
-theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
-transition: Reveal.getQueryHash().transition || 'convex', // see README of reveal.js for options
+transition: 'convex',
 transitionSpeed: 'default',
+
+// Plugins with reveal.js 4.x
+plugins: [ RevealMarkdown, RevealNotes, RevealSearch, RevealZoom ],
 
 // Optional libraries used to extend reveal.js
 dependencies: [
- { src: 'https://cdn.jsdelivr.net/npm/reveal.js@3.8.0/plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
- { src: 'https://cdn.jsdelivr.net/npm/reveal.js@3.8.0/plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
- { src: 'https://cdn.jsdelivr.net/npm/reveal.js@3.8.0/plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } },
- { src: 'https://cdn.jsdelivr.net/npm/reveal.js@3.8.0/plugin/search/search.js', async: true, condition: function() { return !!document.body.classList; } },
- { src: 'https://cdn.jsdelivr.net/npm/reveal.js@3.8.0/plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } }]
+]
 
 });
 </script>

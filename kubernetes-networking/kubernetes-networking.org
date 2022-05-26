@@ -1,12 +1,9 @@
 #+Title: Kubernetes Networking
 #+Author: kangxiaoning
 
-#+REVEAL_VERSION: 4
 #+REVEAL_THEME: white
 #+REVEAL_PLUGINS: (highlight)
-#+REVEAL_ROOT: https://cdn.jsdelivr.net/npm/reveal.js
 #+OPTIONS: reveal_slide_number:c/t toc:nil num:nil reveal_width:1400 reveal_height:1000
-#+REVEAL_HIGHLIGHT_CSS: https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/styles/github.min.css
 
 
 * Objectives
